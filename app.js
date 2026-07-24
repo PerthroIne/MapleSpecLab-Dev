@@ -1,4 +1,4 @@
-const APP_VERSION = "1.0.0-dev.6";
+const APP_VERSION = "1.0.0-dev.7";
 const STORAGE_KEY = "mapleSpecLabV10Dev5";
 const GITHUB_REPOSITORY = "PerthroIne/MapleSpecLab";
 
@@ -145,7 +145,7 @@ function contributionAnalysis(before, after) {
 }
 
 function saveLocal() {
-  // v1.0-dev.6: 입력값은 자동 저장하지 않습니다. 프로필 저장/열기를 사용하세요.
+  // v1.0-dev.7: 입력값은 자동 저장하지 않습니다. 프로필 저장/열기를 사용하세요.
 }
 
 function loadLocal() {
@@ -166,6 +166,45 @@ function activateTab(tabName) {
 function setupTabs() {
   $$(".tab").forEach(button => button.addEventListener("click", () => activateTab(button.dataset.tab)));
   $$('[data-go-tab]').forEach(button => button.addEventListener('click', () => activateTab(button.dataset.goTab)));
+}
+
+
+function formatHomeValue(key, value){
+  const [,isPercent]=STAT_META[key]||[key,false];
+  const number=Number(value||0);
+  return `${number.toLocaleString("ko-KR",{maximumFractionDigits:3})}${isPercent?"%":""}`;
+}
+
+function renderHomeDashboard(){
+  const statKeys=["attack","attack_pct","main_stat","main_stat_pct","hp","critical_rate","critical_damage","attack_speed"];
+  const cards=document.querySelector("#homeStatCards");
+  if(cards) cards.innerHTML=statKeys.map(key=>`<article class="dashboard-stat-card"><span>${STAT_META[key][0]}${STAT_META[key][1]?" %":""}</span><strong>${formatHomeValue(key,state.stats[key])}</strong></article>`).join("");
+
+  const preview=document.querySelector("#homeOcrPreview");
+  if(preview) preview.innerHTML=statKeys.slice(0,12).map(key=>{
+    const value=Number(state.stats[key]||0), filled=value!==0;
+    return `<article class="ocr-preview-item ${filled?"":"empty"}"><span>${STAT_META[key][0]}</span><strong>${formatHomeValue(key,value)}</strong><em>${filled?"입력됨":"미입력"}</em></article>`;
+  }).join("");
+
+  const team=getBaselineCompanionTeam();
+  const teamBox=document.querySelector("#homeCurrentCompanionTeam");
+  const count=document.querySelector("#homeTeamCount");
+  const stateLabel=document.querySelector("#homeProfileTeamState");
+  if(count) count.textContent=`${team.length}/7`;
+  if(stateLabel) stateLabel.textContent=team.length===7?"등록 완료":"미등록";
+  if(teamBox){
+    teamBox.innerHTML=team.length?team.slice(0,7).map(x=>`<div class="dashboard-team-member"><img src="${x.companion.icon_data||x.companion.icon}" alt="${x.companion.name}"><b>${x.companion.name}</b><small>Lv.${x.level}</small></div>`).join(""):'<p class="dashboard-empty">현재 사용 중인 동료를 등록해 주세요.</p>';
+  }
+
+  const equipment=document.querySelector("#homeEquipmentSummary");
+  const ability=document.querySelector("#homeAbilitySummary");
+  const makeRows=(source, fallback)=>{
+    const rows=(state.changes||[]).filter(row=>String(row.source||"").includes(source)).slice(0,5);
+    if(!rows.length) return fallback.map(([icon,title,sub,value])=>`<div class="module-list-row"><span class="module-list-icon">${icon}</span><div><b>${title}</b><small>${sub}</small></div><span>${value}</span></div>`).join("");
+    return rows.map(row=>`<div class="module-list-row"><span class="module-list-icon">↔</span><div><b>${STAT_META[row.key]?.[0]||row.key}</b><small>${row.before} → ${row.after}</small></div><span>${Number(row.after)-Number(row.before)>=0?"+":""}${Number(row.after)-Number(row.before)}</span></div>`).join("");
+  };
+  if(equipment) equipment.innerHTML=makeRows("장비",[["⚔","장비 비교 미등록","현재 장비 A와 변경 장비 B를 입력하세요.","대기"],["＋","OCR 또는 직접 입력","최대 7개 옵션 비교","시작"]]);
+  if(ability) ability.innerHTML=makeRows("어빌",[["✦","어빌리티 비교 미등록","현재 어빌 A와 변경 어빌 B를 입력하세요.","대기"],["＋","OCR 또는 직접 입력","최대 7개 슬롯 비교","시작"]]);
 }
 
 function renderStats() {
@@ -210,6 +249,7 @@ function renderStats() {
 
   renderCurrentStateSummary(state.stats);
   renderStatsCurrentCompanionTeam();
+  renderHomeDashboard();
 }
 
 function renderStatsCurrentCompanionTeam(){
@@ -355,6 +395,7 @@ function renderCurrentStateSummary(stats) {
 }
 
 function renderResults() {
+  renderHomeDashboard();
   const before = {...state.stats};
   const after = getAfterStats();
   renderCurrentStateSummary(before);
@@ -1147,6 +1188,7 @@ function renderCurrentCompanionTeam(){
   if(team.length!==7){box.innerHTML='<div class="empty-state">아래 목록에서 현재 장착 동료를 정확히 7명 선택한 뒤 기준 저장을 눌러주세요.</div>';renderStatsCurrentCompanionTeam();return}
   box.innerHTML=team.map((x,i)=>`<div class="companion-current-member"><span>${i===0?"메인":"서브"}</span><img src="${x.companion.icon_data||x.companion.icon}" alt="${x.companion.name}"><strong>${x.companion.name}</strong><small>${x.companion.rarities[x.rarity].name} Lv.${x.level}</small></div>`).join("");
   renderStatsCurrentCompanionTeam();
+  renderHomeDashboard();
 }
 
 function renderCompanions(){
@@ -1416,6 +1458,7 @@ setupAdvancedChangeInputs();
 setupAllDropZones();
 setupManualEntryActions();
 setupReportActions();
+renderHomeDashboard();
 setupCompanionActions();
 loadCompanionDatabase();
 setupPwa();

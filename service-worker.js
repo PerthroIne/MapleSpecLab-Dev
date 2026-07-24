@@ -1,4 +1,4 @@
-const CACHE_NAME = "maple-spec-lab-v1-dev-6";
+const CACHE_NAME = "maple-spec-lab-v1-dev-7";
 const APP_SHELL = [
   "./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest",
   "./companions_database.json", "./assets/brand/representative.png",
