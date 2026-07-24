@@ -10,7 +10,13 @@
 <link href="./manifest.webmanifest" rel="manifest"/>
 <link href="./assets/brand/representative.png" rel="icon"/>
 <link href="./styles.css" rel="stylesheet"/>
-</head>
+<script>
+(function(){
+  if(!location.pathname.toLowerCase().includes("maplespeclab-dev")) return;
+  if("serviceWorker" in navigator){navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister()))).catch(()=>{});}
+  if("caches" in window){caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k)))).catch(()=>{});}
+})();
+</script></head>
 <body class="theme-light">
 <div class="app-shell">
 <header class="topbar master-header">
@@ -20,7 +26,7 @@
 <h1>MapleSpecLab</h1>
 <p class="subtitle">메이플 키우기 연구소</p>
 </div>
-</div>
+<span class="dev-build-badge">DEV 8</span></div>
 <nav aria-label="기능 탭" class="tabs master-tabs">
 <button class="tab active" data-tab="home" type="button">홈</button>
 <button class="tab" data-tab="stats" type="button">현재 스펙</button>
@@ -42,81 +48,76 @@
 <main>
 <section class="tab-panel active" id="tab-home">
 <div class="dashboard-top-grid">
-  <article class="dashboard-hero-card">
-    <div class="dashboard-hero-copy">
-      <p class="eyebrow">MAPLE SPEC LAB</p>
-      <h2>스펙 분석부터<br/>변경 결과까지, 한 번에.</h2>
-      <p>OCR 또는 직접 입력으로 현재 스펙을 등록하고<br/>장비·어빌·동료 변경 결과를 바로 비교해보세요.</p>
-      <div class="button-row dashboard-hero-actions">
-        <button class="button dark-primary" data-go-tab="capture" type="button">OCR 시작</button>
-        <button class="button ghost" data-go-tab="stats" type="button">직접 입력</button>
-      </div>
-      <p class="home-project-note">개인의 호기심으로 시작한 프로젝트입니다.</p>
-    </div>
-    <div class="dashboard-hero-visual">
-      <img alt="메이플 키우기 연구소 대표 이미지" src="./assets/brand/representative.png"/>
-    </div>
-    <div class="dashboard-feature-strip">
-      <article><span>◎</span><div><strong>정확한 분석</strong><p>현재 스펙과 변경값을 분리해 계산합니다.</p></div></article>
-      <article><span>↗</span><div><strong>최적 선택 추천</strong><p>수많은 경우 중 더 나은 선택을 찾습니다.</p></div></article>
-      <article><span>⇄</span><div><strong>변경 결과 비교</strong><p>변경 전후 피해 변화를 한눈에 봅니다.</p></div></article>
-      <article><span>◇</span><div><strong>데이터는 안전하게</strong><p>이미지와 입력값은 기기 안에서 처리됩니다.</p></div></article>
-    </div>
-  </article>
-
-  <article class="dashboard-current-card">
-    <div class="dashboard-card-heading">
-      <div><h2>현재 기준</h2><p>현재 스펙과 사용 중인 동료를 관리합니다.</p></div>
-      <div class="button-row compact-actions">
-        <button class="button ghost" data-go-tab="capture" type="button">OCR로 불러오기</button>
-        <button class="button ghost" data-go-tab="stats" type="button">직접 입력</button>
-      </div>
-    </div>
-    <div class="dashboard-current-grid">
-      <section class="dashboard-team-box">
-        <div class="mini-title-row"><strong>현재 장착 동료</strong><span id="homeTeamCount">0/7</span></div>
-        <div class="dashboard-team-list" id="homeCurrentCompanionTeam"><p class="dashboard-empty">현재 사용 중인 동료를 등록해 주세요.</p></div>
-      </section>
-      <section class="dashboard-profile-box">
-        <div class="mini-title-row"><strong>프로필 정보</strong><button class="mini-link" data-go-tab="stats" type="button">수정</button></div>
-        <dl><div><dt>프로필</dt><dd id="homeProfileName">현재 세션</dd></div><div><dt>저장 방식</dt><dd>직접 저장</dd></div><div><dt>기준 동료</dt><dd id="homeProfileTeamState">미등록</dd></div></dl>
-      </section>
-    </div>
-    <div class="dashboard-baseline-alert">현재 스펙에는 등록한 동료 7명의 효과가 이미 반영된 기준값을 입력해야 합니다.</div>
-    <div class="dashboard-stats-heading"><div><h3>기본 능력치</h3><p>현재 계산의 기준이 되는 핵심 수치입니다.</p></div><button class="mini-link" data-go-tab="stats" type="button">상세 입력</button></div>
-    <div class="dashboard-stat-grid" id="homeStatCards"></div>
-  </article>
+<article class="dashboard-hero-card">
+<div class="dashboard-hero-copy">
+<p class="eyebrow">MAPLE SPEC LAB</p>
+<h2>스펙 분석부터 변경 결과까지, 한 번에.</h2>
+<p>OCR 또는 직접 입력으로 현재 스펙을 등록하고<br/>장비·어빌·동료 변경 결과를 바로 비교해보세요.</p>
+<div class="button-row dashboard-hero-actions">
+<button class="button dark-primary" data-go-tab="capture" type="button">OCR 시작</button>
+<button class="button ghost" data-go-tab="stats" type="button">직접 입력</button>
 </div>
-
+<p class="home-project-note">개인의 호기심으로 시작한 프로젝트입니다.</p>
+</div>
+<div class="dashboard-hero-visual">
+<img alt="MapleSpecLab 연구소 분석 일러스트" src="./assets/brand/lab-hero.png"/>
+</div>
+<div class="dashboard-feature-strip">
+<article><span>◎</span><div><strong>정확한 분석</strong><p>현재 스펙과 변경값을 분리해 계산합니다.</p></div></article>
+<article><span>↗</span><div><strong>최적 선택 추천</strong><p>수많은 경우 중 더 나은 선택을 찾습니다.</p></div></article>
+<article><span>⇄</span><div><strong>변경 결과 비교</strong><p>변경 전후 피해 변화를 한눈에 봅니다.</p></div></article>
+<article><span>◇</span><div><strong>데이터는 안전하게</strong><p>이미지와 입력값은 기기 안에서 처리됩니다.</p></div></article>
+</div>
+</article>
+<article class="dashboard-current-card">
+<div class="dashboard-card-heading">
+<div><h2>현재 기준</h2><p>현재 스펙과 사용 중인 동료를 관리합니다.</p></div>
+<div class="button-row compact-actions">
+<button class="button ghost" data-go-tab="capture" type="button">OCR로 불러오기</button>
+<button class="button ghost" data-go-tab="stats" type="button">직접 입력</button>
+</div>
+</div>
+<div class="dashboard-current-grid">
+<section class="dashboard-team-box">
+<div class="mini-title-row"><strong>현재 장착 동료</strong><span id="homeTeamCount">0/7</span></div>
+<div class="dashboard-team-list" id="homeCurrentCompanionTeam"><p class="dashboard-empty">현재 사용 중인 동료를 등록해 주세요.</p></div>
+</section>
+<section class="dashboard-profile-box">
+<div class="mini-title-row"><strong>프로필 정보</strong><button class="mini-link" data-go-tab="stats" type="button">수정</button></div>
+<dl><div><dt>프로필</dt><dd id="homeProfileName">현재 세션</dd></div><div><dt>저장 방식</dt><dd>직접 저장</dd></div><div><dt>기준 동료</dt><dd id="homeProfileTeamState">미등록</dd></div><div><dt>최근 수정</dt><dd id="homeProfileUpdated">현재 세션</dd></div><div><dt>저장 상태</dt><dd id="homeProfileSaveState">미저장</dd></div></dl>
+</section>
+</div>
+<div class="dashboard-baseline-alert">현재 스펙에는 등록한 동료 7명의 효과가 이미 반영된 기준값을 입력해야 합니다.</div>
+<div class="dashboard-stats-heading"><div><h3>기본 능력치</h3><p>현재 계산의 기준이 되는 핵심 수치입니다.</p></div><button class="mini-link" data-go-tab="stats" type="button">상세 입력</button></div>
+<div class="dashboard-stat-grid" id="homeStatCards"></div>
+</article>
+</div>
 <div class="dashboard-module-grid">
-  <article class="dashboard-module-card dashboard-ocr-card">
-    <div class="module-heading"><div><h3>OCR 결과 검토</h3><p>인식 결과를 확인하고 수정합니다.</p></div><button class="mini-link" data-go-tab="capture" type="button">전체 확인</button></div>
-    <div class="dashboard-filter-row"><span>현재 스펙</span><div class="status-legend"><i class="ok"></i> 입력됨 <i class="empty"></i> 미입력</div></div>
-    <div class="dashboard-ocr-preview" id="homeOcrPreview"></div>
-    <button class="dashboard-card-footer" data-go-tab="capture" type="button">OCR 화면 열기 <span>›</span></button>
-  </article>
-
-  <article class="dashboard-module-card">
-    <div class="module-heading"><div><h3>장비</h3><p>장비 변경 옵션을 비교합니다.</p></div><button class="mini-link" data-go-tab="changes" type="button">OCR 불러오기</button></div>
-    <div class="module-tabs"><b>현재 장비</b><span>변경 옵션</span></div>
-    <div class="module-list" id="homeEquipmentSummary"></div>
-    <button class="dashboard-add-button" data-go-tab="changes" type="button">＋ 장비 비교 시작</button>
-  </article>
-
-  <article class="dashboard-module-card">
-    <div class="module-heading"><div><h3>어빌리티</h3><p>어빌리티 변경 옵션을 비교합니다.</p></div><button class="mini-link" data-go-tab="changes" type="button">OCR 불러오기</button></div>
-    <div class="module-tabs"><b>현재 어빌리티</b><span>변경 옵션</span></div>
-    <div class="module-list" id="homeAbilitySummary"></div>
-    <button class="dashboard-add-button" data-go-tab="changes" type="button">＋ 어빌리티 비교 시작</button>
-  </article>
-
-  <article class="dashboard-module-card dashboard-optimizer-card">
-    <div class="module-heading"><div><h3>동료 조합 추천</h3><p>현재 기준 조합에서 더 나은 구성을 찾습니다.</p></div></div>
-    <div class="optimizer-preview-row"><label>추천 목표<select id="homeOptimizerCategory"><option>범용</option><option>보스</option><option>일반몹</option><option>보스 + 일반몹 혼합</option><option>상태이상</option><option>명중</option></select></label><label>추천 개수<select id="homeOptimizerCount"><option>3</option><option selected>5</option><option>10</option></select></label></div>
-    <div class="optimizer-preview-priorities"><div><b>1</b><span>데미지</span><strong>40%</strong></div><div><b>2</b><span>크리티컬 데미지</span><strong>35%</strong></div><div><b>3</b><span>공격 속도</span><strong>25%</strong></div></div>
-    <button class="button primary dashboard-optimize-button" data-go-tab="companions" type="button">추천 조합 계산</button>
-    <p class="module-note">현재 장착 동료 7명을 기준으로 실제 변화량만 계산합니다.</p>
-  </article>
+<article class="dashboard-module-card dashboard-ocr-card">
+<div class="module-heading"><div><h3>OCR 결과 검토</h3><p>인식 결과를 확인하고 수정합니다.</p></div><button class="mini-link" data-go-tab="capture" type="button">전체 확인</button></div>
+<div class="dashboard-filter-row"><span>현재 스펙</span><div class="status-legend"><i class="ok"></i> 입력됨 <i class="empty"></i> 미입력</div></div>
+<div class="dashboard-ocr-preview" id="homeOcrPreview"></div>
+<button class="dashboard-card-footer" data-go-tab="capture" type="button">OCR 화면 열기 <span>›</span></button>
+</article>
+<article class="dashboard-module-card">
+<div class="module-heading"><div><h3>장비</h3><p>장비 변경 옵션을 비교합니다.</p></div><button class="mini-link" data-go-tab="changes" type="button">OCR 불러오기</button></div>
+<div class="module-tabs"><b>현재 장비</b><span>변경 옵션</span></div>
+<div class="module-list" id="homeEquipmentSummary"></div>
+<button class="dashboard-add-button" data-go-tab="changes" type="button">＋ 장비 비교 시작</button>
+</article>
+<article class="dashboard-module-card">
+<div class="module-heading"><div><h3>어빌리티</h3><p>어빌리티 변경 옵션을 비교합니다.</p></div><button class="mini-link" data-go-tab="changes" type="button">OCR 불러오기</button></div>
+<div class="module-tabs"><b>현재 어빌리티</b><span>변경 옵션</span></div>
+<div class="module-list" id="homeAbilitySummary"></div>
+<button class="dashboard-add-button" data-go-tab="changes" type="button">＋ 어빌리티 비교 시작</button>
+</article>
+<article class="dashboard-module-card dashboard-optimizer-card">
+<div class="module-heading"><div><h3>동료 조합 추천</h3><p>현재 기준 조합에서 더 나은 구성을 찾습니다.</p></div></div>
+<div class="optimizer-preview-row"><label>추천 목표<select id="homeOptimizerCategory"><option>범용</option><option>보스</option><option>일반몹</option><option>보스 + 일반몹 혼합</option><option>상태이상</option><option>명중</option></select></label><label>추천 개수<select id="homeOptimizerCount"><option>3</option><option selected="">5</option><option>10</option></select></label></div>
+<div class="optimizer-preview-priorities"><div><b>1</b><span>데미지</span><strong>40%</strong></div><div><b>2</b><span>크리티컬 데미지</span><strong>35%</strong></div><div><b>3</b><span>공격 속도</span><strong>25%</strong></div></div>
+<button class="button primary dashboard-optimize-button" data-go-tab="companions" type="button">추천 조합 계산</button>
+<p class="module-note">현재 장착 동료 7명을 기준으로 실제 변화량만 계산합니다.</p>
+</article>
 </div>
 </section>
 <section class="tab-panel" id="tab-capture">
@@ -482,10 +483,10 @@
 <p>에픽·유니크·레전드 목록 이미지를 넣으면 보유 여부와 레벨 후보를 추출합니다.</p></div>
 <button class="button primary" id="runCompanionInventoryOcrBtn" type="button">보유 동료 OCR</button></div>
 <div class="companion-import-grid">
-<div class="companion-import-box image-drop-target" data-drop-label="에픽 동료 목록" id="epicInventoryDrop"><span class="rarity-badge epic">에픽</span><div class="image-change-actions compact-actions"><label class="button ghost file-label">에픽 이미지<input accept="image/*" id="epicInventoryInput" type="file"/></label><button class="button ghost" id="epicInventoryClipboardBtn" type="button">클립보드</button></div><div class="inventory-preview empty-state" id="epicInventoryPreview">이미지 없음</div></div>
-<div class="companion-import-box image-drop-target" data-drop-label="유니크 동료 목록" id="uniqueInventoryDrop"><span class="rarity-badge unique">유니크</span><div class="image-change-actions compact-actions"><label class="button ghost file-label">유니크 이미지<input accept="image/*" id="uniqueInventoryInput" type="file"/></label><button class="button ghost" id="uniqueInventoryClipboardBtn" type="button">클립보드</button></div><div class="inventory-preview empty-state" id="uniqueInventoryPreview">이미지 없음</div></div>
-<div class="companion-import-box image-drop-target" data-drop-label="레전드 동료 목록" id="legendaryInventoryDrop"><span class="rarity-badge legendary">레전드</span><div class="image-change-actions compact-actions"><label class="button ghost file-label">레전드 이미지<input accept="image/*" id="legendaryInventoryInput" type="file"/></label><button class="button ghost" id="legendaryInventoryClipboardBtn" type="button">클립보드</button></div><div class="inventory-preview empty-state" id="legendaryInventoryPreview">이미지 없음</div></div>
-</div>
+
+
+
+<div class="companion-import-box image-drop-target" data-drop-label="레전드 동료 목록" id="legendaryInventoryDrop"><span class="rarity-badge legendary">레전드</span><div class="image-change-actions compact-actions"><label class="button ghost file-label">레전드 이미지<input accept="image/*" id="legendaryInventoryInput" type="file"/></label><button class="button ghost" id="legendaryInventoryClipboardBtn" type="button">클립보드</button></div><div class="inventory-preview empty-state" id="legendaryInventoryPreview">이미지 없음</div></div><div class="companion-import-box image-drop-target" data-drop-label="유니크 동료 목록" id="uniqueInventoryDrop"><span class="rarity-badge unique">유니크</span><div class="image-change-actions compact-actions"><label class="button ghost file-label">유니크 이미지<input accept="image/*" id="uniqueInventoryInput" type="file"/></label><button class="button ghost" id="uniqueInventoryClipboardBtn" type="button">클립보드</button></div><div class="inventory-preview empty-state" id="uniqueInventoryPreview">이미지 없음</div></div><div class="companion-import-box image-drop-target" data-drop-label="에픽 동료 목록" id="epicInventoryDrop"><span class="rarity-badge epic">에픽</span><div class="image-change-actions compact-actions"><label class="button ghost file-label">에픽 이미지<input accept="image/*" id="epicInventoryInput" type="file"/></label><button class="button ghost" id="epicInventoryClipboardBtn" type="button">클립보드</button></div><div class="inventory-preview empty-state" id="epicInventoryPreview">이미지 없음</div></div></div>
 <div class="ocr-change-preview empty-state" id="companionInventoryOcrResult">OCR 결과가 여기에 표시됩니다.</div>
 </article>
 <div class="companion-summary-grid">
@@ -601,7 +602,7 @@
 </div>
 </section>
 </main>
-<footer><span>이미지는 서버로 전송하지 않음</span><span>·</span><span>프로필은 직접 저장·불러오기</span><span>·</span><span>v1.0.0-dev.7</span><span>·</span><a href="https://kimprincess-calculator.netlify.app/" rel="noopener noreferrer" target="_blank">계산식 출처: 최종뎀 계산기 Beta 2.0</a></footer>
+<footer><span>이미지는 서버로 전송하지 않음</span><span>·</span><span>프로필은 직접 저장·불러오기</span><span>·</span><span>v1.0.0-dev.8</span><span>·</span><a href="https://kimprincess-calculator.netlify.app/" rel="noopener noreferrer" target="_blank">계산식 출처: 최종뎀 계산기 Beta 2.0</a><span>· DEV BUILD 2026.07.24</span></footer>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <script src="./app.js"></script>

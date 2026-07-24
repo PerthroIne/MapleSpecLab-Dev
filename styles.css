@@ -142,3 +142,35 @@ footer{display:flex;justify-content:center;flex-wrap:wrap;gap:7px;padding:22px 0
 @media(max-width:1280px){.master-header{grid-template-columns:auto 1fr}.master-header .top-actions{grid-column:1/-1;justify-content:flex-end}.dashboard-top-grid{grid-template-columns:1fr}.dashboard-module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:900px){.master-header{position:static;display:flex;flex-direction:column;align-items:stretch}.master-tabs{order:3}.master-header .top-actions{order:2;justify-content:flex-start}.dashboard-hero-card{grid-template-columns:1fr}.dashboard-hero-visual{min-height:260px}.dashboard-feature-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-current-grid{grid-template-columns:1fr}.dashboard-module-grid{grid-template-columns:1fr}.dashboard-module-card{min-height:auto}}
 @media(max-width:620px){.dashboard-hero-copy{padding:28px 20px 20px}.dashboard-hero-copy h2{font-size:2.2rem}.dashboard-feature-strip{grid-template-columns:1fr}.dashboard-team-list{grid-template-columns:repeat(4,minmax(0,1fr))}.dashboard-stat-grid,.dashboard-ocr-preview{grid-template-columns:repeat(2,minmax(0,1fr))}.master-header .top-actions .button{flex:1 1 40%}}
+
+/* === v1.0-dev.8 design lock overrides === */
+.master-tabs{gap:6px;padding:8px 0}
+.master-tabs .tab{border:1px solid transparent;border-radius:10px;padding:10px 13px;min-height:40px;font-weight:700;color:#263b57;background:transparent}
+.master-tabs .tab:hover{background:#f3f6fa;border-color:#e5ebf2}
+.master-tabs .tab.active{background:#fff3de;border-color:#ffd89a;color:#0f2747;box-shadow:0 2px 8px rgba(245,158,11,.08)}
+.master-tabs .tab.active::after{display:none}
+.dev-build-badge{display:inline-flex;align-items:center;justify-content:center;margin-left:8px;padding:4px 7px;border-radius:999px;background:#eef4ff;color:#315f9b;font-size:.62rem;font-weight:900;letter-spacing:.06em;border:1px solid #d8e5f7}
+.dashboard-hero-copy{padding:34px 28px 24px}
+.dashboard-hero-copy h2{font-size:clamp(1.8rem,2.55vw,2.75rem);line-height:1.2;letter-spacing:-.035em;max-width:540px;margin-bottom:16px}
+.dashboard-hero-copy>p:not(.eyebrow):not(.home-project-note){font-size:.98rem;line-height:1.75;max-width:520px}
+.dashboard-hero-visual{background:linear-gradient(135deg,#f7fbff,#fff9ed);min-height:330px;display:flex;align-items:center;justify-content:center;padding:12px}
+.dashboard-hero-visual img{width:100%;height:100%;object-fit:contain;object-position:center;border-radius:16px}
+.dashboard-profile-box dl>div{grid-template-columns:72px 1fr}
+.image-change-panel>.image-change-actions{display:grid;grid-template-columns:repeat(3,minmax(0,180px));gap:12px;justify-content:start;margin-top:18px;padding:0 16px 16px}
+.image-change-panel>.image-change-actions .button{width:100%;justify-content:center;min-height:44px}
+.drop-icon,.paste-icon{background:#fff;border:1px solid #dbe5ef;color:#f59e0b;box-shadow:0 6px 16px rgba(15,39,71,.06)}
+.drop-panel,.paste-panel{background:#fff}
+.companion-import-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.companion-grid{display:block}
+.companion-rarity-section{background:#fff;border:1px solid var(--line);border-radius:16px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow-soft)}
+.companion-rarity-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.companion-rarity-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;padding:14px}
+.companion-rarity-section:has(.rarity-badge.legendary) .companion-rarity-header{background:#fffaf0}
+.companion-rarity-section:has(.rarity-badge.unique) .companion-rarity-header{background:#faf6ff}
+.companion-rarity-section:has(.rarity-badge.epic) .companion-rarity-header{background:#f4f9ff}
+.companion-card{box-shadow:none;border-color:#e5ebf2;padding:12px}
+.companion-card-actions{gap:6px}
+.companion-state-toggle{padding:7px}
+footer{flex-wrap:wrap}
+@media(max-width:1050px){.companion-import-grid{grid-template-columns:1fr}.image-change-panel>.image-change-actions{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:620px){.image-change-panel>.image-change-actions{grid-template-columns:1fr}.dashboard-hero-copy h2{font-size:2rem}.master-tabs .tab{padding:9px 11px}}

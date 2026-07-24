@@ -1,4 +1,5 @@
-const APP_VERSION = "1.0.0-dev.7";
+const APP_VERSION = "1.0.0-dev.8";
+const BUILD_TIME = "2026-07-24 20:30";
 const STORAGE_KEY = "mapleSpecLabV10Dev5";
 const GITHUB_REPOSITORY = "PerthroIne/MapleSpecLab";
 
@@ -190,6 +191,8 @@ function renderHomeDashboard(){
   const teamBox=document.querySelector("#homeCurrentCompanionTeam");
   const count=document.querySelector("#homeTeamCount");
   const stateLabel=document.querySelector("#homeProfileTeamState");
+  const updatedLabel=document.querySelector("#homeProfileUpdated");
+  const saveStateLabel=document.querySelector("#homeProfileSaveState");
   if(count) count.textContent=`${team.length}/7`;
   if(stateLabel) stateLabel.textContent=team.length===7?"등록 완료":"미등록";
   if(teamBox){
@@ -1123,7 +1126,10 @@ function setupAdvancedChangeInputs(){
 }
 
 function setupPwa() {
-  if ("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js").catch(console.warn);
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(reg => reg.unregister())).catch(console.warn);
+  }
+  if ("caches" in window) caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key)))).catch(console.warn);
   window.addEventListener("beforeinstallprompt", event => {
     event.preventDefault(); state.deferredInstallPrompt = event;
     $("#installBtn").classList.remove("hidden");
