@@ -1,4 +1,4 @@
-const APP_VERSION = "1.0.0-dev.9";
+const APP_VERSION = "1.0.0-dev.10";
 const BUILD_TIME = "2026-07-24 20:30";
 const STORAGE_KEY = "mapleSpecLabV10Dev5";
 const GITHUB_REPOSITORY = "PerthroIne/MapleSpecLab";

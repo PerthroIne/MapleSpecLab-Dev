@@ -10,16 +10,16 @@
 <meta http-equiv="Expires" content="0"/>
 <meta content="메이플 키우기 스펙 및 옵션 변경 비교 도구" name="description"/>
 <title>메이플 키우기 스펙 연구소</title>
-<link href="./manifest.webmanifest?v=1.0.0-dev.9" rel="manifest"/>
+<link href="./manifest.webmanifest?v=1.0.0-dev.10" rel="manifest"/>
 <link href="./assets/brand/representative.png" rel="icon"/>
-<link href="./styles.css?v=1.0.0-dev.9" rel="stylesheet"/>
+<link href="./styles.css?v=1.0.0-dev.10" rel="stylesheet"/>
 <script>
 (function(){
-  const BUILD = "1.0.0-dev.9";
+  const BUILD = "1.0.0-dev.10";
   const isDev = location.pathname.toLowerCase().includes("maplespeclab-dev");
   if (!isDev) return;
 
-  const cleanup = async () => {
+  async function clearLegacyCaches(){
     try {
       if ("serviceWorker" in navigator) {
         const regs = await navigator.serviceWorker.getRegistrations();
@@ -30,57 +30,45 @@
         await Promise.all(keys.map(key => caches.delete(key)));
       }
     } catch (_) {}
-  };
+  }
 
-  cleanup().then(() => {
-    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-      const resetKey = "msl-sw-reset-" + BUILD;
-      if (!sessionStorage.getItem(resetKey)) {
-        sessionStorage.setItem(resetKey, "1");
-        const url = new URL(location.href);
-        url.searchParams.set("build", BUILD);
-        url.searchParams.set("t", Date.now().toString());
-        location.replace(url.toString());
-      }
-    }
-  });
-
-  window.addEventListener("pageshow", event => {
-    if (event.persisted) location.reload();
-  });
-
-  fetch("./version.json?t=" + Date.now(), { cache: "no-store" })
-    .then(r => r.ok ? r.json() : null)
-    .then(info => {
-      if (!info || info.version === BUILD) return;
+  async function checkLatest(){
+    try {
+      const response = await fetch("./version.json?ts=" + Date.now(), {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache" }
+      });
+      if (!response.ok) return;
+      const info = await response.json();
+      if (!info || !info.version || info.version === BUILD) return;
       const url = new URL(location.href);
-      url.searchParams.set("build", info.version);
-      url.searchParams.set("t", Date.now().toString());
+      url.searchParams.set("version", info.version);
+      url.searchParams.set("refresh", Date.now().toString());
       location.replace(url.toString());
-    })
-    .catch(() => {});
+    } catch (_) {}
+  }
+
+  clearLegacyCaches().then(checkLatest);
+  window.addEventListener("pageshow", e => { if (e.persisted) checkLatest(); });
+  window.addEventListener("focus", checkLatest);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) checkLatest(); });
 })();
 </script></head>
 <body class="theme-light">
 <div class="app-shell">
 <header class="topbar master-header">
+<div class="header-main-row">
 <div class="brand-lockup">
 <img alt="메이플 키우기 연구소 대표 이미지" class="brand-avatar" src="./assets/brand/representative.png"/>
-<div>
-<h1>MapleSpecLab</h1>
-<p class="subtitle">메이플 키우기 연구소</p>
+<div><h1>MapleSpecLab</h1><p class="subtitle">메이플 키우기 연구소</p></div>
 </div>
-<span class="dev-build-badge">DEV 9</span></div>
-<nav aria-label="기능 탭" class="tabs master-tabs">
+<nav aria-label="주요 기능" class="tabs master-tabs">
 <button class="tab active" data-tab="home" type="button">홈</button>
 <button class="tab" data-tab="stats" type="button">현재 스펙</button>
 <button class="tab" data-tab="capture" type="button">OCR</button>
 <button class="tab" data-tab="changes" type="button">장비·어빌</button>
 <button class="tab" data-tab="companions" type="button">동료</button>
 <button class="tab" data-tab="results" type="button">분석 결과</button>
-<button class="tab tab-more" data-tab="help" type="button">도움말</button>
-<button class="tab tab-more" data-tab="report" type="button">오류 제보</button>
-<button class="tab tab-more" data-tab="about" type="button">정보</button>
 </nav>
 <div class="top-actions">
 <button class="button ghost hidden" id="installBtn" type="button">앱 설치</button>
@@ -88,23 +76,26 @@
 <button class="button ghost" id="saveProfileBtn" type="button">프로필 저장</button>
 <button class="button primary" id="runCompareBtn" type="button">비교 실행</button>
 </div>
+</div>
+<nav aria-label="보조 메뉴" class="secondary-nav">
+<button class="secondary-link" data-tab="help" type="button">도움말</button>
+<button class="secondary-link" data-tab="report" type="button">오류 제보</button>
+<button class="secondary-link" data-tab="about" type="button">정보</button>
+</nav>
 </header>
 <main>
 <section class="tab-panel active" id="tab-home">
 <div class="dashboard-top-grid">
-<article class="dashboard-hero-card">
+<article class="dashboard-hero-card text-only-hero">
 <div class="dashboard-hero-copy">
 <p class="eyebrow">MAPLE SPEC LAB</p>
-<h2><span>스펙 분석부터 변경 결과까지,</span><span>한 번에.</span></h2>
-<p class="dashboard-hero-description"><span>OCR 또는 직접 입력으로 현재 스펙을 등록하고</span><span>장비·어빌·동료 변경 결과를 바로 비교해보세요.</span></p>
+<h2>스펙 분석부터 변경 결과까지, 한 번에.</h2>
+<p class="dashboard-hero-description">현재 스펙을 등록하고 장비·어빌·동료 변경 결과를 바로 비교해보세요.</p>
 <div class="button-row dashboard-hero-actions">
 <button class="button dark-primary" data-go-tab="capture" type="button">OCR 시작</button>
 <button class="button ghost" data-go-tab="stats" type="button">직접 입력</button>
 </div>
 <p class="home-project-note">개인의 호기심으로 시작한 프로젝트입니다.</p>
-</div>
-<div class="dashboard-hero-visual">
-<img alt="MapleSpecLab 연구소 분석 일러스트" src="./assets/brand/lab-hero.png"/>
 </div>
 <div class="dashboard-feature-strip">
 <article><span>◎</span><div><strong>정확한 분석</strong><p>현재 스펙과 변경값을 분리해 계산합니다.</p></div></article>
@@ -172,6 +163,9 @@
 <p>업로드된 이미지는 서버로 전송하지 않고 현재 브라우저 안에서만 처리합니다.</p>
 </div>
 <div class="status-pill" id="ocrStatus">OCR 대기</div>
+</div>
+<div class="ocr-caution">
+<strong>OCR 결과는 반드시 직접 확인해 주세요.</strong> 이미지 해상도와 화면 상태에 따라 항목이나 숫자가 잘못 인식될 수 있습니다. 현재 스펙에 적용하기 전에 모든 값을 한 번 더 확인하고 필요한 부분을 수정해 주세요.
 </div>
 <div class="capture-grid">
 <article class="panel drop-panel" id="dropZone">
@@ -598,7 +592,7 @@
 <div class="section-heading report-heading"><div><p class="eyebrow">BUG REPORT</p><h2>오류 및 의견 제보</h2><p>아래 내용을 작성하면 MapleSpecLab GitHub Issue 작성 화면이 열립니다. 전송 전 미리보기에서 포함 내용을 확인할 수 있습니다.</p></div></div>
 <article class="notice-card privacy-notice"><strong>개인정보를 자동으로 수집하지 않습니다</strong><p>이름, 이메일, 전화번호, IP 주소, 위치, 로그인 정보, 방문 기록, 게임 계정 정보는 수집하지 않습니다. 원본 이미지도 자동으로 전송되지 않습니다.</p></article>
 <article class="panel report-form report-steps">
-<section class="report-step"><div class="report-step-label">STEP 1</div><h3>제보 종류를 선택하세요</h3><select id="reportType"><option>OCR 인식 오류</option><option>계산 결과 오류</option><option>화면/UI 오류</option><option>기능 제안</option><option>기타</option></select></section>
+<section class="report-step"><div class="report-step-label">STEP 1</div><h3>제보 종류를 선택하세요</h3><select id="reportType"><option>화면/UI 오류</option><option>버튼·기능 오류</option><option>저장·불러오기 오류</option><option>입력값 반영 오류</option><option>드래그 앤 드롭 오류</option><option>모바일 화면 오류</option><option>기능 제안</option><option>기타</option></select></section>
 <section class="report-step"><div class="report-step-label">STEP 2</div><h3>문제를 한 줄로 요약하세요</h3><input id="reportTitle" maxlength="100" placeholder="예: 장비 부옵션 7번이 인식되지 않습니다" type="text"/></section>
 <section class="report-step"><div class="report-step-label">STEP 3</div><h3>문제가 발생한 상황을 설명하세요</h3><textarea id="reportDescription" placeholder="어느 메뉴에서 어떤 작업을 했을 때 문제가 발생했는지 적어 주세요." rows="6"></textarea><textarea id="reportSteps" placeholder="재현 순서 예시
 1. 장비 비교 메뉴 열기
@@ -627,7 +621,7 @@
 <article class="panel about-card">
 <h3>계산식 출처</h3>
 <p>스펙 및 피해량 계산식은 <a href="https://kimprincess-calculator.netlify.app/" rel="noopener noreferrer" target="_blank">최종뎀 계산기 Beta 2.0</a>을 토대로 제작되었습니다.</p>
-<p>일부 기능과 계산 방식은 MapleSpecLab의 목적에 맞게 수정 및 확장되었습니다. 원 계산기와 MapleSpecLab은 별개의 프로젝트입니다.</p>
+<p>일부 기능과 계산 방식은 MapleSpecLab의 목적에 맞게 수정·확장되었습니다. 게임 업데이트, 숨겨진 내부 공식, 반올림 방식 등의 차이로 실제 게임 결과와 다를 수 있으며, 계산 결과는 비교와 참고를 위한 값으로 정확한 게임 내부 결과를 보장하지 않습니다. 원 계산기와 MapleSpecLab은 별개의 프로젝트입니다.</p>
 </article>
 <article class="panel about-card">
 <h3>개인정보 처리</h3>
@@ -637,7 +631,7 @@
 <article class="panel about-card">
 <h3>버전 정보</h3>
 <dl class="version-list">
-<div><dt>연구소 버전</dt><dd>v1.0.0-dev.9</dd></div>
+<div><dt>연구소 버전</dt><dd>v1.0.0-dev.7</dd></div>
 <div><dt>계산식 기준</dt><dd>Beta 2.0 기반</dd></div>
 <div><dt>동료 DB</dt><dd>Companion DB v1</dd></div>
 <div><dt>배포 단계</dt><dd>개발 테스트</dd></div>
@@ -646,9 +640,9 @@
 </div>
 </section>
 </main>
-<footer><span>이미지는 서버로 전송하지 않음</span><span>·</span><span>프로필은 직접 저장·불러오기</span><span>·</span><span>v1.0.0-dev.9</span><span>·</span><a href="https://kimprincess-calculator.netlify.app/" rel="noopener noreferrer" target="_blank">계산식 출처: 최종뎀 계산기 Beta 2.0</a><span>· DEV BUILD 2026.07.24</span></footer>
+<footer><span>이미지는 서버로 전송하지 않음</span><span>·</span><span>프로필은 직접 저장·불러오기</span><span>·</span><span>v1.0.0-dev.10</span><span>·</span><a href="https://kimprincess-calculator.netlify.app/" rel="noopener noreferrer" target="_blank">계산식 출처: 최종뎀 계산기 Beta 2.0</a><span>· DEV BUILD 2026.07.24</span></footer>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
-<script src="./app.js?v=1.0.0-dev.9"></script>
+<script src="./app.js?v=1.0.0-dev.10"></script>
 </body>
 </html>
