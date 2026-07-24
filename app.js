@@ -1,6 +1,6 @@
-const APP_VERSION = "1.0.0-dev.3";
-const STORAGE_KEY = "mapleSpecLabV10Dev3";
-const GITHUB_REPOSITORY = "PerthroIne/MapleSpecLab";
+const APP_VERSION = "1.0.0-dev.4";
+const STORAGE_KEY = "mapleSpecLabV10Dev4";
+const GITHUB_REPOSITORY = "PerthroIne/MapleSpecLab-Dev";
 
 const STAT_META = {
   attack: ["공격력", false], attack_pct: ["공격력 %", true],
@@ -722,11 +722,11 @@ function renderOcrDiff(selector,beforeMap,afterMap,source){
 
 function normalizeOptionRows(rows, count=7){
   const cleaned=(rows||[]).slice(0,count).map(x=>({
-    key:x?.key&&STAT_META[x.key]?x.key:"attack",
+    key:x?.key&&STAT_META[x.key]?x.key:"",
     value:Number(x?.value||0),
     raw:x?.raw||""
   }));
-  while(cleaned.length<count)cleaned.push({key:"attack",value:0,raw:""});
+  while(cleaned.length<count)cleaned.push({key:"",value:0,raw:""});
   return cleaned
 }
 
@@ -777,11 +777,13 @@ function renderSevenRowEditor({selector,source,beforeRows,afterRows,stateKey,tit
 
   const sync=()=>{
     for(const name of ["before","after"]){
-      state[stateKey][name]=state[stateKey][name].map((row,i)=>({
-        ...row,
-        key:box.querySelector(`[data-seven-key="${name}-${i}"]`).value,
-        value:Number(box.querySelector(`[data-seven-value="${name}-${i}"]`).value||0)
-      }));
+      state[stateKey][name]=state[stateKey][name].map((row,i)=>{
+        const keyEl=box.querySelector(`[data-seven-key="${name}-${i}"]`);
+        const valueEl=box.querySelector(`[data-seven-value="${name}-${i}"]`);
+        const key=keyEl.value;
+        if(!key){ valueEl.value=0; valueEl.disabled=true; } else valueEl.disabled=false;
+        return {...row,key,value:key?Number(valueEl.value||0):0};
+      });
     }
     const a=sumOptionRows(state[stateKey].before),b=sumOptionRows(state[stateKey].after);
     const keys=[...new Set([...Object.keys(a),...Object.keys(b)])];
@@ -802,6 +804,7 @@ function renderSevenRowEditor({selector,source,beforeRows,afterRows,stateKey,tit
   });
   box.querySelectorAll("[data-seven-clear]").forEach(btn=>btn.addEventListener("click",()=>{
     const [name,index]=btn.dataset.sevenClear.split("-");
+    box.querySelector(`[data-seven-key="${name}-${index}"]`).value="";
     box.querySelector(`[data-seven-value="${name}-${index}"]`).value=0;sync()
   }));
   box.querySelector("[data-seven-apply]").addEventListener("click",()=>{
@@ -838,7 +841,7 @@ function normalizeAbilityRows(rows){
     value:Number(x?.value||0),
     raw:x?.raw||""
   }));
-  while(cleaned.length<7)cleaned.push({key:"boss_damage",value:0,raw:""});
+  while(cleaned.length<7)cleaned.push({key:"",value:0,raw:""});
   return cleaned
 }
 
@@ -892,11 +895,13 @@ function renderAbilityOcrEditor(beforeRows,afterRows){
 
   const sync=()=>{
     for(const side of ["before","after"]){
-      state.pendingAbilityRows[side]=state.pendingAbilityRows[side].map((row,i)=>({
-        ...row,
-        key:box.querySelector(`[data-ability-key="${side}-${i}"]`).value,
-        value:Number(box.querySelector(`[data-ability-value="${side}-${i}"]`).value||0)
-      }));
+      state.pendingAbilityRows[side]=state.pendingAbilityRows[side].map((row,i)=>{
+        const keyEl=box.querySelector(`[data-ability-key="${side}-${i}"]`);
+        const valueEl=box.querySelector(`[data-ability-value="${side}-${i}"]`);
+        const key=keyEl.value;
+        if(!key){ valueEl.value=0; valueEl.disabled=true; } else valueEl.disabled=false;
+        return {...row,key,value:key?Number(valueEl.value||0):0};
+      });
     }
     renderAbilityAggregate()
   };
@@ -907,6 +912,7 @@ function renderAbilityOcrEditor(beforeRows,afterRows){
   });
   box.querySelectorAll("[data-clear-ability-row]").forEach(btn=>btn.addEventListener("click",()=>{
     const [side,index]=btn.dataset.clearAbilityRow.split("-");
+    box.querySelector(`[data-ability-key="${side}-${index}"]`).value="";
     box.querySelector(`[data-ability-value="${side}-${index}"]`).value=0;
     sync()
   }));
@@ -1027,6 +1033,24 @@ function renderLiveImpactPreview(){
     : "변경을 추가하면 현재 스펙에 미치는 영향이 표시됩니다.";
 }
 
+
+function setupFileDropZone(selector, onFiles){
+  const zone=$(selector); if(!zone)return;
+  ["dragenter","dragover"].forEach(type=>zone.addEventListener(type,e=>{e.preventDefault();e.stopPropagation();zone.classList.add("dragover")}));
+  ["dragleave","drop"].forEach(type=>zone.addEventListener(type,e=>{e.preventDefault();e.stopPropagation();zone.classList.remove("dragover")}));
+  zone.addEventListener("drop",e=>{const files=[...(e.dataTransfer?.files||[])].filter(f=>f.type.startsWith("image/"));if(files.length)onFiles(files)});
+}
+
+function setupAllDropZones(){
+  setupFileDropZone("#equipmentBeforeDrop",files=>{state.equipmentBeforeImages=createLocalImageEntries(files);renderMiniGallery("#equipmentBeforeGallery",state.equipmentBeforeImages)});
+  setupFileDropZone("#equipmentAfterDrop",files=>{state.equipmentAfterImages=createLocalImageEntries(files);renderMiniGallery("#equipmentAfterGallery",state.equipmentAfterImages)});
+  setupFileDropZone("#abilityBeforeDrop",files=>{state.abilityBeforeImages=createLocalImageEntries(files);renderMiniGallery("#abilityBeforeGallery",state.abilityBeforeImages)});
+  setupFileDropZone("#abilityAfterDrop",files=>{state.abilityAfterImages=createLocalImageEntries(files);renderMiniGallery("#abilityAfterGallery",state.abilityAfterImages)});
+  for(const rarity of ["epic","unique","legendary"]){
+    setupFileDropZone(`#${rarity}InventoryDrop`,files=>setInventoryImage(rarity,files[0]));
+  }
+}
+
 function setupAdvancedChangeInputs(){
   setupChangeSourceTabs();
 
@@ -1107,6 +1131,20 @@ function inventoryEntries(ownedOnly=false){
 function selectedCompanions(){return inventoryEntries(true).filter(x=>x.equipped)}
 function companionSumsForEntries(entries){const sums={};for(const x of entries)sums[x.companion.effect_key]=(sums[x.companion.effect_key]||0)+x.value;return sums}
 function companionSums(){return companionSumsForEntries(selectedCompanions())}
+
+function getBaselineCompanionTeam(){
+  const saved=new Set(state.savedCompanionTeam||[]);
+  const savedTeam=inventoryEntries(true).filter(x=>saved.has(x.key));
+  if(savedTeam.length===7)return savedTeam;
+  return inventoryEntries(true).filter(x=>x.equipped);
+}
+function renderCurrentCompanionTeam(){
+  const box=$("#currentCompanionTeamView"); if(!box)return;
+  const team=getBaselineCompanionTeam();
+  if(team.length!==7){box.innerHTML='<div class="empty-state">아래 목록에서 현재 장착 동료를 정확히 7명 선택한 뒤 기준 저장을 눌러주세요.</div>';return}
+  box.innerHTML=team.map((x,i)=>`<div class="companion-current-member"><span>${i===0?"메인":"서브"}</span><img src="${x.companion.icon_data||x.companion.icon}" alt="${x.companion.name}"><strong>${x.companion.name}</strong><small>${x.companion.rarities[x.rarity].name} Lv.${x.level}</small></div>`).join("");
+}
+
 function renderCompanions(){
   if(!state.companionDb)return;
   const q=($("#companionSearch")?.value||"").trim().toLowerCase();
@@ -1150,7 +1188,7 @@ function renderCompanions(){
 
   $$("[data-inv-level]").forEach(el=>el.addEventListener("change",()=>{const inv=state.companionInventory[el.dataset.invLevel],c=state.companionDb.companions.find(x=>x.id===inv.companionId);inv.level=Math.max(1,Math.min(Number(el.value||1),c.rarities[inv.rarity].level_cap));renderCompanions();renderInventorySummary();saveLocal()}));
   $$("[data-inv-owned]").forEach(el=>el.addEventListener("change",()=>{const inv=state.companionInventory[el.dataset.invOwned];inv.owned=el.checked;if(!inv.owned){inv.equipped=false;inv.fixed=false;inv.excluded=false}renderCompanions();renderInventorySummary();saveLocal()}));
-  $$("[data-inv-equipped]").forEach(el=>el.addEventListener("change",()=>{const inv=state.companionInventory[el.dataset.invEquipped],count=inventoryEntries(true).filter(x=>x.equipped).length;if(el.checked&&count>=7){alert("현재 장착은 최대 7개입니다.");el.checked=false;return}inv.equipped=el.checked;renderInventorySummary();saveLocal()}));
+  $$("[data-inv-equipped]").forEach(el=>el.addEventListener("change",()=>{const inv=state.companionInventory[el.dataset.invEquipped],count=inventoryEntries(true).filter(x=>x.equipped).length;if(el.checked&&count>=7){alert("현재 장착은 최대 7개입니다.");el.checked=false;return}inv.equipped=el.checked;renderInventorySummary();renderCurrentCompanionTeam();saveLocal()}));
   $$("[data-inv-fixed]").forEach(el=>el.addEventListener("change",()=>{const inv=state.companionInventory[el.dataset.invFixed],count=inventoryEntries(true).filter(x=>x.fixed).length;if(el.checked&&count>=7){alert("필수 고정은 최대 7개입니다.");el.checked=false;return}inv.fixed=el.checked;if(inv.fixed)inv.excluded=false;renderCompanions();renderInventorySummary();saveLocal()}));
   $$("[data-inv-excluded]").forEach(el=>el.addEventListener("change",()=>{const inv=state.companionInventory[el.dataset.invExcluded];inv.excluded=el.checked;if(inv.excluded)inv.fixed=false;renderCompanions();renderInventorySummary();saveLocal()}));
   renderInventorySummary()
@@ -1161,35 +1199,79 @@ function renderInventorySummary(){
   $("#ownedCompanionCount").textContent=`${owned.length}개`;
   $("#equippedCompanionCount").textContent=`${equipped.length} / 7`;
   $("#fixedCompanionCount").textContent=`${fixed.length} / 7`;
+  renderCurrentCompanionTeam();
 }
-function scoreTeam(entries,mode,bossWeight=50){
-  const before={...state.stats},after={...before};for(const[k,v]of Object.entries(companionSumsForEntries(entries)))after[k]=Number(after[k]||0)+v;
-  const comp=compare(before,after);if(mode==="balanced"){const w=Math.max(0,Math.min(100,Number(bossWeight||50)))/100;return comp.boss_skill*w+comp.normal_skill*(1-w)}return comp[mode]||0
+
+const OPTIMIZER_PRESETS={
+  general:[["damage",40],["critical_damage",35],["attack_speed",25]],
+  boss:[["boss_damage",60],["critical_damage",25],["attack_speed",15]],
+  normal:[["normal_damage",60],["critical_damage",25],["attack_speed",15]],
+  mixed:[["boss_damage",40],["normal_damage",40],["attack_speed",20]],
+  status:[["status_damage",60],["damage",25],["attack_speed",15]],
+  accuracy:[["accuracy",70],["normal_damage",20],["attack_speed",10]]
+};
+function optimizerPriorities(){
+  return [1,2,3].map(i=>({key:$(`#priorityKey${i}`)?.value||"",weight:Number($(`#priorityWeight${i}`)?.value||0)})).filter(x=>x.key&&x.weight>0)
+}
+function priorityScore(entries){
+  const sums=companionSumsForEntries(entries),priorities=optimizerPriorities();
+  return priorities.reduce((total,p)=>{
+    const value=Number(sums[p.key]||0),base=Math.max(1,Math.abs(Number(state.stats[p.key]||0)));
+    const normalized=STAT_META[p.key]?.[1]?value:(value/base*100);
+    return total+normalized*(p.weight/100)
+  },0)
+}
+function scoreTeam(entries){
+  const before={...state.stats},after={...before};
+  for(const[k,v]of Object.entries(companionSumsForEntries(entries)))after[k]=Number(after[k]||0)+v;
+  const mode=$("#optimizerMode").value,comp=compare(before,after);
+  const damageScore=mode==="boss"?comp.boss_skill:mode==="normal"?comp.normal_skill:mode==="mixed"?(comp.boss_skill+comp.normal_skill)/2:(comp.boss_skill+comp.normal_skill+comp.boss_basic+comp.normal_basic)/4;
+  return damageScore+priorityScore(entries);
+}
+function applyOptimizerPreset(mode){
+  const preset=OPTIMIZER_PRESETS[mode]||OPTIMIZER_PRESETS.general;
+  preset.forEach(([key,weight],i)=>{const n=i+1;$(`#priorityKey${n}`).value=key;$(`#priorityWeight${n}`).value=weight});
+  updatePriorityStatus();
+}
+function updatePriorityStatus(){
+  const total=[1,2,3].reduce((s,i)=>s+Number($(`#priorityWeight${i}`)?.value||0),0),el=$("#priorityWeightStatus");if(!el)return;
+  el.textContent=`가중치 합계 ${total}%${total===100?"":" - 100%가 되도록 조정하세요."}`;
+  el.classList.toggle("warning",total!==100)
+}
+function normalizePriorityWeights(){
+  const vals=[1,2,3].map(i=>Math.max(0,Number($(`#priorityWeight${i}`).value||0))),sum=vals.reduce((a,b)=>a+b,0);
+  if(sum<=0){[60,25,15].forEach((v,i)=>$(`#priorityWeight${i+1}`).value=v)}else{
+    let used=0;vals.forEach((v,i)=>{const n=i===2?100-used:Math.round(v/sum*100);$(`#priorityWeight${i+1}`).value=n;used+=n})
+  }updatePriorityStatus()
 }
 function combinationsExact(items,k,callback,start=0,picked=[]){if(k===0){callback([...picked]);return}for(let i=start;i<=items.length-k;i++){picked.push(items[i]);combinationsExact(items,k-1,callback,i+1,picked);picked.pop()}}
 function optimizeCompanions(){
+  const current=getBaselineCompanionTeam();if(current.length!==7)return alert("현재 사용 중인 동료 7명을 먼저 선택하고 기준 저장을 눌러주세요.");
   const owned=inventoryEntries(true),fixed=owned.filter(x=>x.fixed&&!x.excluded),candidates=owned.filter(x=>!x.fixed&&!x.excluded),need=7-fixed.length;
   if(fixed.length>7)return alert("필수 고정 동료가 7개를 초과했습니다.");if(candidates.length<need)return alert(`추천 가능한 동료가 부족합니다. 현재 ${fixed.length+candidates.length}개입니다.`);
-  const mode=$("#optimizerMode").value,bw=Number($("#bossWeight").value||50),limit=Math.max(1,Math.min(10,Number($("#optimizerResultCount").value||5))),results=[];
-  const push=team=>{results.push({team,score:scoreTeam(team,mode,bw)});results.sort((a,b)=>b.score-a.score);if(results.length>limit)results.length=limit};
+  const totalWeight=[1,2,3].reduce((s,i)=>s+Number($(`#priorityWeight${i}`).value||0),0);if(totalWeight!==100)return alert("세부 우선순위 가중치 합계를 100%로 맞춰주세요.");
+  const limit=Math.max(1,Math.min(10,Number($("#optimizerResultCount").value||5))),results=[];
+  const push=team=>{results.push({team,score:scoreTeam(team)});results.sort((a,b)=>b.score-a.score);if(results.length>limit)results.length=limit};
   const comb=(n,r)=>{let v=1;for(let i=1;i<=r;i++)v=v*(n-r+i)/i;return Math.round(v)},total=comb(candidates.length,need);
   if(total<=250000)combinationsExact(candidates,need,c=>push([...fixed,...c]));
-  else{
-    let beam=[[]];const width=2500;
-    for(let depth=0;depth<need;depth++){const ex=[];for(const p of beam){const last=p.length?candidates.indexOf(p.at(-1)):-1;for(let i=last+1;i<candidates.length;i++){const n=[...p,candidates[i]];ex.push({p:n,s:scoreTeam([...fixed,...n],mode,bw)})}}ex.sort((a,b)=>b.s-a.s);beam=ex.slice(0,width).map(x=>x.p)}
-    for(const c of beam)push([...fixed,...c])
-  }
-  state.optimizerResults=results;$("#optimizerStatus").textContent=`${total.toLocaleString("ko-KR")}개 후보에서 상위 ${results.length}개를 계산했습니다.${total>250000?" 대규모 후보는 빔 탐색을 사용했습니다.":""}`;renderOptimizerResults()
+  else{let beam=[[]];const width=2500;for(let depth=0;depth<need;depth++){const ex=[];for(const p of beam){const last=p.length?candidates.indexOf(p.at(-1)):-1;for(let i=last+1;i<candidates.length;i++){const n=[...p,candidates[i]];ex.push({p:n,s:scoreTeam([...fixed,...n])})}}ex.sort((a,b)=>b.s-a.s);beam=ex.slice(0,width).map(x=>x.p)}for(const c of beam)push([...fixed,...c])}
+  state.optimizerResults=results;$("#optimizerStatus").textContent=`${total.toLocaleString("ko-KR")}개 후보에서 현재 조합과 비교할 상위 ${results.length}개를 계산했습니다.`;renderOptimizerResults()
+}
+function companionDeltaSums(current,recommended){
+  const a=companionSumsForEntries(current),b=companionSumsForEntries(recommended),out={};
+  for(const key of new Set([...Object.keys(a),...Object.keys(b)]))out[key]=Number(b[key]||0)-Number(a[key]||0);return out
+}
+function applyRecommendedTeamToChanges(team){
+  const current=getBaselineCompanionTeam();if(current.length!==7)return alert("현재 동료 기준 7명을 먼저 저장하세요.");
+  state.changes=state.changes.filter(c=>c.source!=="동료");
+  const deltas=companionDeltaSums(current,team);
+  for(const[key,delta]of Object.entries(deltas)){if(!(key in STAT_META)||delta===0)continue;const before=Number(state.stats[key]||0);state.changes.push({source:"동료",key,before,after:before+delta})}
+  renderChanges();renderLiveImpactPreview();renderResults();saveLocal();activateTab("changes")
 }
 function renderOptimizerResults(){
-  const box=$("#optimizerResults");
-  const liveCurrent=inventoryEntries(true).filter(x=>x.equipped);
-  const savedKeys=new Set(state.savedCompanionTeam||[]);
-  const savedCurrent=inventoryEntries(true).filter(x=>savedKeys.has(x.key));
-  const current=savedCurrent.length===7?savedCurrent:liveCurrent;
-  const mode=$("#optimizerMode").value,bw=$("#bossWeight").value;box.innerHTML="";
-  state.optimizerResults.forEach((r,i)=>{const cs=current.length===7?scoreTeam(current,mode,bw):null,card=document.createElement("article");card.className="optimizer-result-card";card.innerHTML=`<div class="optimizer-result-head"><div><strong>${i+1}위 추천 조합</strong><p class="subtitle">필수 고정 ${r.team.filter(x=>x.fixed).length}개 포함</p></div><div class="optimizer-score">${r.score>=0?"+":""}${r.score.toFixed(3)}%</div></div><div class="optimizer-team">${r.team.map(x=>`<div class="optimizer-member"><img src="${x.companion.icon_data||x.companion.icon}" alt="${x.companion.name}"><strong>${x.companion.name}</strong><small>${x.companion.rarities[x.rarity].name} Lv.${x.level}</small></div>`).join("")}</div><div class="optimizer-deltas">${cs===null?"현재 장착 7개를 지정하면 현재 조합 대비 차이를 표시합니다.":`현재 조합 대비 ${(r.score-cs)>=0?"+":""}${(r.score-cs).toFixed(3)}%`}</div><div class="button-row top-gap"><button class="button primary" data-apply-team="${i}" type="button">이 조합을 현재 장착으로 적용</button></div>`;box.appendChild(card)});
-  $$("[data-apply-team]").forEach(btn=>btn.addEventListener("click",()=>{for(const inv of Object.values(state.companionInventory))inv.equipped=false;for(const x of state.optimizerResults[Number(btn.dataset.applyTeam)].team)state.companionInventory[x.key].equipped=true;renderCompanions();saveLocal()}))
+  const box=$("#optimizerResults"),current=getBaselineCompanionTeam(),currentScore=current.length===7?scoreTeam(current):null;box.innerHTML="";
+  state.optimizerResults.forEach((r,i)=>{const deltas=current.length===7?companionDeltaSums(current,r.team):{},deltaRows=Object.entries(deltas).filter(([,v])=>v!==0).map(([k,v])=>`${STAT_META[k]?.[0]||k} ${v>=0?"+":""}${formatValue(k,v)}`).join(" · ");const card=document.createElement("article");card.className="optimizer-result-card";card.innerHTML=`<div class="optimizer-result-head"><div><strong>${i+1}위 추천 조합</strong><p class="subtitle">현재 사용 7명 대비 교체 결과</p></div><div class="optimizer-score">${currentScore===null?"기준 미저장":`${r.score-currentScore>=0?"+":""}${(r.score-currentScore).toFixed(3)}`}</div></div><div class="optimizer-team">${r.team.map(x=>`<div class="optimizer-member"><img src="${x.companion.icon_data||x.companion.icon}" alt="${x.companion.name}"><strong>${x.companion.name}</strong><small>${x.companion.rarities[x.rarity].name} Lv.${x.level}</small></div>`).join("")}</div><div class="optimizer-deltas">${deltaRows||"현재 조합과 능력치 차이가 없습니다."}</div><div class="button-row top-gap"><button class="button primary" data-use-recommended="${i}" type="button">이 추천을 변경 목록에 적용</button></div>`;box.appendChild(card)});
+  $$('[data-use-recommended]').forEach(btn=>btn.addEventListener('click',()=>applyRecommendedTeamToChanges(state.optimizerResults[Number(btn.dataset.useRecommended)].team)))
 }
 function setInventoryImage(rarity,file){if(!file)return;const old=state.companionInventoryImages[rarity];if(old?.url)URL.revokeObjectURL(old.url);state.companionInventoryImages[rarity]={file,url:URL.createObjectURL(file)};$(`#${rarity}InventoryPreview`).className="inventory-preview";$(`#${rarity}InventoryPreview`).innerHTML=`<img src="${state.companionInventoryImages[rarity].url}" alt="${rarity} 목록">`}
 async function setInventoryFromClipboard(rarity){
@@ -1238,17 +1320,15 @@ async function runInventoryOcr(){
   renderCompanions();saveLocal()
 }
 
-function applyCompanionsToChanges(){state.changes=state.changes.filter(c=>c.source!=="동료");for(const[k,v]of Object.entries(companionSums())){if(!(k in STAT_META))continue;const before=Number(state.stats[k]||0);state.changes.push({source:"동료",key:k,before,after:before+v})}renderChanges();renderResults();saveLocal();activateTab("results")}
+function applyCompanionsToChanges(){const team=selectedCompanions();if(team.length!==7)return alert("추천 또는 변경할 동료 조합을 정확히 7명 선택하세요.");applyRecommendedTeamToChanges(team)}
 function setupCompanionActions(){
   $("#companionSearch").addEventListener("input",renderCompanions);$("#companionRarityFilter").addEventListener("change",renderCompanions);$("#companionStateFilter").addEventListener("change",renderCompanions);$("#companionSortMode").addEventListener("change",renderCompanions);$("#runCompanionOptimizerBtn").addEventListener("click",optimizeCompanions);$("#runCompanionInventoryOcrBtn").addEventListener("click",runInventoryOcr);
+  const priorityOptions='<option value="">선택 안 함</option>'+Object.entries(STAT_META).map(([k,m])=>`<option value="${k}">${m[0]}</option>`).join("");[1,2,3].forEach(i=>{$(`#priorityKey${i}`).innerHTML=priorityOptions;$(`#priorityWeight${i}`).addEventListener("input",updatePriorityStatus)});$("#optimizerMode").addEventListener("change",e=>applyOptimizerPreset(e.target.value));$("#normalizePriorityBtn").addEventListener("click",normalizePriorityWeights);applyOptimizerPreset($("#optimizerMode").value);
   $("#epicInventoryInput").addEventListener("change",e=>setInventoryImage("epic",e.target.files[0]));$("#uniqueInventoryInput").addEventListener("change",e=>setInventoryImage("unique",e.target.files[0]));$("#legendaryInventoryInput").addEventListener("change",e=>setInventoryImage("legendary",e.target.files[0]));
   $("#epicInventoryClipboardBtn").addEventListener("click",()=>setInventoryFromClipboard("epic"));$("#uniqueInventoryClipboardBtn").addEventListener("click",()=>setInventoryFromClipboard("unique"));$("#legendaryInventoryClipboardBtn").addEventListener("click",()=>setInventoryFromClipboard("legendary"));
-  $("#saveCurrentCompanionTeamBtn").addEventListener("click",()=>{
-    const team=inventoryEntries(true).filter(x=>x.equipped);
-    if(team.length!==7)return alert("현재 장착 동료를 정확히 7명 선택하세요.");
-    state.savedCompanionTeam=team.map(x=>x.key);saveLocal();
-    $("#optimizerStatus").textContent="현재 7인 조합을 비교 기준으로 저장했습니다.";
-  });
+  const saveCurrentTeam=()=>{const team=inventoryEntries(true).filter(x=>x.equipped);if(team.length!==7)return alert("현재 장착 동료를 정확히 7명 선택하세요.");state.savedCompanionTeam=team.map(x=>x.key);saveLocal();renderCurrentCompanionTeam();$("#optimizerStatus").textContent="현재 7인 조합을 비교 기준으로 저장했습니다.";};
+  $("#saveCurrentCompanionTeamBtn").addEventListener("click",saveCurrentTeam);
+  $("#saveCurrentCompanionTeamBtn2")?.addEventListener("click",saveCurrentTeam);
   $("#resetCompanionInventoryBtn").addEventListener("click",()=>{
     if(!confirm("보유 상태, 레벨, 현재 장착, 필수 고정, 추천 제외를 모두 초기화할까요?"))return;
     state.companionInventory={};state.savedCompanionTeam=[];state.optimizerResults=[];
@@ -1329,6 +1409,7 @@ renderOcrResults();
 setupInputs();
 setupActions();
 setupAdvancedChangeInputs();
+setupAllDropZones();
 setupManualEntryActions();
 setupReportActions();
 setupCompanionActions();

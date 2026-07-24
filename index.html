@@ -238,7 +238,7 @@
               <p>현재 장비 A와 교체할 장비 B를 각각 넣습니다. OCR 결과는 직접 수정한 뒤 변경 목록에 적용할 수 있습니다.</p>
             </div>
             <div class="ability-columns">
-              <div>
+              <div class="image-drop-target" id="equipmentBeforeDrop" data-drop-label="현재 장비 A">
                 <h3>현재 장비 A</h3>
                 <div class="image-change-actions compact-actions">
                   <label class="button ghost file-label">이미지 선택<input id="equipmentBeforeInput" type="file" accept="image/*" multiple></label>
@@ -246,7 +246,7 @@
                 </div>
                 <div id="equipmentBeforeGallery" class="mini-image-gallery empty-state">이미지가 없습니다.</div>
               </div>
-              <div>
+              <div class="image-drop-target" id="equipmentAfterDrop" data-drop-label="변경 장비 B">
                 <h3>변경 장비 B</h3>
                 <div class="image-change-actions compact-actions">
                   <label class="button ghost file-label">이미지 선택<input id="equipmentAfterInput" type="file" accept="image/*" multiple></label>
@@ -272,7 +272,7 @@
               <p>현재 어빌과 변경할 어빌 이미지를 각각 넣어 옵션 총합 차이를 계산합니다.</p>
             </div>
             <div class="ability-columns">
-              <div>
+              <div class="image-drop-target" id="abilityBeforeDrop" data-drop-label="현재 어빌 A">
                 <h3>현재 어빌 A</h3>
                 <div class="image-change-actions compact-actions">
                   <label class="button ghost file-label">이미지 선택<input id="abilityBeforeInput" type="file" accept="image/*" multiple></label>
@@ -280,7 +280,7 @@
                 </div>
                 <div id="abilityBeforeGallery" class="mini-image-gallery empty-state">이미지가 없습니다.</div>
               </div>
-              <div>
+              <div class="image-drop-target" id="abilityAfterDrop" data-drop-label="변경 어빌 B">
                 <h3>변경 어빌 B</h3>
                 <div class="image-change-actions compact-actions">
                   <label class="button ghost file-label">이미지 선택<input id="abilityAfterInput" type="file" accept="image/*" multiple></label>
@@ -290,6 +290,7 @@
               </div>
             </div>
             <div class="image-change-actions">
+              <button id="startAbilityManualBtn" class="button ghost" type="button">직접 입력 시작</button>
               <button id="runAbilityOcrBtn" class="button primary" type="button">어빌 최대 7줄 OCR 실행</button>
               <button id="clearAbilityChangesBtn" class="button danger ghost" type="button">어빌 변경 초기화</button>
             </div>
@@ -466,9 +467,9 @@
     <p>에픽·유니크·레전드 목록 이미지를 넣으면 보유 여부와 레벨 후보를 추출합니다.</p></div>
     <button id="runCompanionInventoryOcrBtn" class="button primary" type="button">보유 동료 OCR</button></div>
     <div class="companion-import-grid">
-      <div class="companion-import-box"><span class="rarity-badge epic">에픽</span><div class="image-change-actions compact-actions"><label class="button ghost file-label">에픽 이미지<input id="epicInventoryInput" type="file" accept="image/*"></label><button id="epicInventoryClipboardBtn" class="button ghost" type="button">클립보드</button></div><div id="epicInventoryPreview" class="inventory-preview empty-state">이미지 없음</div></div>
-      <div class="companion-import-box"><span class="rarity-badge unique">유니크</span><div class="image-change-actions compact-actions"><label class="button ghost file-label">유니크 이미지<input id="uniqueInventoryInput" type="file" accept="image/*"></label><button id="uniqueInventoryClipboardBtn" class="button ghost" type="button">클립보드</button></div><div id="uniqueInventoryPreview" class="inventory-preview empty-state">이미지 없음</div></div>
-      <div class="companion-import-box"><span class="rarity-badge legendary">레전드</span><div class="image-change-actions compact-actions"><label class="button ghost file-label">레전드 이미지<input id="legendaryInventoryInput" type="file" accept="image/*"></label><button id="legendaryInventoryClipboardBtn" class="button ghost" type="button">클립보드</button></div><div id="legendaryInventoryPreview" class="inventory-preview empty-state">이미지 없음</div></div>
+      <div class="companion-import-box image-drop-target" id="epicInventoryDrop" data-drop-label="에픽 동료 목록"><span class="rarity-badge epic">에픽</span><div class="image-change-actions compact-actions"><label class="button ghost file-label">에픽 이미지<input id="epicInventoryInput" type="file" accept="image/*"></label><button id="epicInventoryClipboardBtn" class="button ghost" type="button">클립보드</button></div><div id="epicInventoryPreview" class="inventory-preview empty-state">이미지 없음</div></div>
+      <div class="companion-import-box image-drop-target" id="uniqueInventoryDrop" data-drop-label="유니크 동료 목록"><span class="rarity-badge unique">유니크</span><div class="image-change-actions compact-actions"><label class="button ghost file-label">유니크 이미지<input id="uniqueInventoryInput" type="file" accept="image/*"></label><button id="uniqueInventoryClipboardBtn" class="button ghost" type="button">클립보드</button></div><div id="uniqueInventoryPreview" class="inventory-preview empty-state">이미지 없음</div></div>
+      <div class="companion-import-box image-drop-target" id="legendaryInventoryDrop" data-drop-label="레전드 동료 목록"><span class="rarity-badge legendary">레전드</span><div class="image-change-actions compact-actions"><label class="button ghost file-label">레전드 이미지<input id="legendaryInventoryInput" type="file" accept="image/*"></label><button id="legendaryInventoryClipboardBtn" class="button ghost" type="button">클립보드</button></div><div id="legendaryInventoryPreview" class="inventory-preview empty-state">이미지 없음</div></div>
     </div>
     <div id="companionInventoryOcrResult" class="ocr-change-preview empty-state">OCR 결과가 여기에 표시됩니다.</div>
   </article>
@@ -478,6 +479,15 @@
     <article class="metric-card"><span>현재 장착</span><strong id="equippedCompanionCount">0 / 7</strong></article>
     <article class="metric-card"><span>필수 고정</span><strong id="fixedCompanionCount">0 / 7</strong></article>
   </div>
+
+  <article class="panel companion-baseline-panel">
+    <div class="panel-title-row">
+      <div><p class="eyebrow">CURRENT EQUIPPED BASELINE</p><h3>현재 사용 중인 동료 7명</h3>
+      <p>현재 스펙에 이미 포함된 비교 기준입니다. 동료를 선택해도 능력치가 다시 더해지지 않으며, 추천 조합과의 차이만 계산합니다.</p></div>
+      <button id="saveCurrentCompanionTeamBtn2" class="button primary" type="button">현재 7명 기준 저장</button>
+    </div>
+    <div id="currentCompanionTeamView" class="companion-current-team-list"></div>
+  </article>
 
   <div class="panel companion-controls">
     <label><span>등급 보기</span><select id="companionRarityFilter"><option value="all">전체</option><option value="legendary">레전드</option><option value="unique">유니크</option><option value="epic">에픽</option></select></label>
@@ -489,12 +499,23 @@
 
   <article class="panel optimizer-panel">
     <div class="panel-title-row"><div><p class="eyebrow">7-SLOT OPTIMIZER</p><h3>보유 동료 조합 추천</h3>
-    <p>필수 고정 N개를 유지하고 나머지 빈자리를 자동으로 채웁니다.</p></div>
+    <p>현재 사용 중인 7명을 기준으로, 필수 고정 동료를 유지하면서 더 나은 조합을 찾습니다.</p></div>
     <button id="runCompanionOptimizerBtn" class="button primary" type="button">추천 조합 계산</button></div>
-    <div class="optimizer-settings">
-      <label><span>추천 기준</span><select id="optimizerMode"><option value="boss_skill">보스 스킬</option><option value="normal_skill">일반몹 스킬</option><option value="boss_basic">보스 기본공격</option><option value="normal_basic">일반몹 기본공격</option><option value="balanced">범용</option></select></label>
-      <label><span>보스 가중치</span><input id="bossWeight" type="number" min="0" max="100" value="50"></label>
+    <div class="optimizer-settings optimizer-settings-v2">
+      <label><span>추천 카테고리</span><select id="optimizerMode">
+        <option value="general">범용</option><option value="boss">보스</option><option value="normal">일반몹</option>
+        <option value="mixed">보스 + 일반몹 혼합</option><option value="status">상태이상</option><option value="accuracy">명중</option>
+      </select></label>
       <label><span>추천 개수</span><input id="optimizerResultCount" type="number" min="1" max="10" value="5"></label>
+    </div>
+    <div class="priority-builder">
+      <div class="priority-heading"><div><h4>세부 우선순위 가중치</h4><p>원하는 능력치를 최대 3개까지 선택하고 합계 100%로 설정하세요. 카테고리를 바꾸면 권장값이 자동 입력됩니다.</p></div><button id="normalizePriorityBtn" class="button ghost" type="button">합계 100% 맞추기</button></div>
+      <div class="priority-grid">
+        <label><span>우선순위 1</span><select id="priorityKey1"></select><input id="priorityWeight1" type="number" min="0" max="100" value="60"></label>
+        <label><span>우선순위 2</span><select id="priorityKey2"></select><input id="priorityWeight2" type="number" min="0" max="100" value="25"></label>
+        <label><span>우선순위 3</span><select id="priorityKey3"></select><input id="priorityWeight3" type="number" min="0" max="100" value="15"></label>
+      </div>
+      <div id="priorityWeightStatus" class="status-line">가중치 합계 100%</div>
     </div>
     <div id="optimizerStatus" class="status-line">보유 동료를 등록한 뒤 추천 조합 계산을 눌러주세요.</div>
     <div id="optimizerResults" class="optimizer-results"></div>
@@ -563,7 +584,7 @@
           <article class="panel about-card">
             <h3>버전 정보</h3>
             <dl class="version-list">
-              <div><dt>연구소 버전</dt><dd>v1.0.0-dev.3</dd></div>
+              <div><dt>연구소 버전</dt><dd>v1.0.0-dev.4</dd></div>
               <div><dt>계산식 기준</dt><dd>Beta 2.0 기반</dd></div>
               <div><dt>동료 DB</dt><dd>Companion DB v1</dd></div>
               <div><dt>배포 단계</dt><dd>개발 테스트</dd></div>
@@ -579,7 +600,7 @@
       <span>·</span>
       <span>이미지는 서버로 전송하지 않음</span>
       <span>·</span>
-      <span>v1.0.0-dev.3</span>
+      <span>v1.0.0-dev.4</span>
       <span>·</span>
       <a href="https://kimprincess-calculator.netlify.app/" target="_blank" rel="noopener noreferrer">계산식 출처: 최종뎀 계산기 Beta 2.0</a>
     </footer>
