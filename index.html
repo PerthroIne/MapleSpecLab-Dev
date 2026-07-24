@@ -5,16 +5,60 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#f6b83f" name="theme-color"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
 <meta content="메이플 키우기 스펙 및 옵션 변경 비교 도구" name="description"/>
 <title>메이플 키우기 스펙 연구소</title>
-<link href="./manifest.webmanifest" rel="manifest"/>
+<link href="./manifest.webmanifest?v=1.0.0-dev.9" rel="manifest"/>
 <link href="./assets/brand/representative.png" rel="icon"/>
-<link href="./styles.css" rel="stylesheet"/>
+<link href="./styles.css?v=1.0.0-dev.9" rel="stylesheet"/>
 <script>
 (function(){
-  if(!location.pathname.toLowerCase().includes("maplespeclab-dev")) return;
-  if("serviceWorker" in navigator){navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister()))).catch(()=>{});}
-  if("caches" in window){caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k)))).catch(()=>{});}
+  const BUILD = "1.0.0-dev.9";
+  const isDev = location.pathname.toLowerCase().includes("maplespeclab-dev");
+  if (!isDev) return;
+
+  const cleanup = async () => {
+    try {
+      if ("serviceWorker" in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(reg => reg.unregister()));
+      }
+      if ("caches" in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(key => caches.delete(key)));
+      }
+    } catch (_) {}
+  };
+
+  cleanup().then(() => {
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      const resetKey = "msl-sw-reset-" + BUILD;
+      if (!sessionStorage.getItem(resetKey)) {
+        sessionStorage.setItem(resetKey, "1");
+        const url = new URL(location.href);
+        url.searchParams.set("build", BUILD);
+        url.searchParams.set("t", Date.now().toString());
+        location.replace(url.toString());
+      }
+    }
+  });
+
+  window.addEventListener("pageshow", event => {
+    if (event.persisted) location.reload();
+  });
+
+  fetch("./version.json?t=" + Date.now(), { cache: "no-store" })
+    .then(r => r.ok ? r.json() : null)
+    .then(info => {
+      if (!info || info.version === BUILD) return;
+      const url = new URL(location.href);
+      url.searchParams.set("build", info.version);
+      url.searchParams.set("t", Date.now().toString());
+      location.replace(url.toString());
+    })
+    .catch(() => {});
 })();
 </script></head>
 <body class="theme-light">
@@ -26,7 +70,7 @@
 <h1>MapleSpecLab</h1>
 <p class="subtitle">메이플 키우기 연구소</p>
 </div>
-<span class="dev-build-badge">DEV 8</span></div>
+<span class="dev-build-badge">DEV 9</span></div>
 <nav aria-label="기능 탭" class="tabs master-tabs">
 <button class="tab active" data-tab="home" type="button">홈</button>
 <button class="tab" data-tab="stats" type="button">현재 스펙</button>
@@ -51,8 +95,8 @@
 <article class="dashboard-hero-card">
 <div class="dashboard-hero-copy">
 <p class="eyebrow">MAPLE SPEC LAB</p>
-<h2>스펙 분석부터 변경 결과까지, 한 번에.</h2>
-<p>OCR 또는 직접 입력으로 현재 스펙을 등록하고<br/>장비·어빌·동료 변경 결과를 바로 비교해보세요.</p>
+<h2><span>스펙 분석부터 변경 결과까지,</span><span>한 번에.</span></h2>
+<p class="dashboard-hero-description"><span>OCR 또는 직접 입력으로 현재 스펙을 등록하고</span><span>장비·어빌·동료 변경 결과를 바로 비교해보세요.</span></p>
 <div class="button-row dashboard-hero-actions">
 <button class="button dark-primary" data-go-tab="capture" type="button">OCR 시작</button>
 <button class="button ghost" data-go-tab="stats" type="button">직접 입력</button>
@@ -593,7 +637,7 @@
 <article class="panel about-card">
 <h3>버전 정보</h3>
 <dl class="version-list">
-<div><dt>연구소 버전</dt><dd>v1.0.0-dev.7</dd></div>
+<div><dt>연구소 버전</dt><dd>v1.0.0-dev.9</dd></div>
 <div><dt>계산식 기준</dt><dd>Beta 2.0 기반</dd></div>
 <div><dt>동료 DB</dt><dd>Companion DB v1</dd></div>
 <div><dt>배포 단계</dt><dd>개발 테스트</dd></div>
@@ -602,9 +646,9 @@
 </div>
 </section>
 </main>
-<footer><span>이미지는 서버로 전송하지 않음</span><span>·</span><span>프로필은 직접 저장·불러오기</span><span>·</span><span>v1.0.0-dev.8</span><span>·</span><a href="https://kimprincess-calculator.netlify.app/" rel="noopener noreferrer" target="_blank">계산식 출처: 최종뎀 계산기 Beta 2.0</a><span>· DEV BUILD 2026.07.24</span></footer>
+<footer><span>이미지는 서버로 전송하지 않음</span><span>·</span><span>프로필은 직접 저장·불러오기</span><span>·</span><span>v1.0.0-dev.9</span><span>·</span><a href="https://kimprincess-calculator.netlify.app/" rel="noopener noreferrer" target="_blank">계산식 출처: 최종뎀 계산기 Beta 2.0</a><span>· DEV BUILD 2026.07.24</span></footer>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
-<script src="./app.js"></script>
+<script src="./app.js?v=1.0.0-dev.9"></script>
 </body>
 </html>
