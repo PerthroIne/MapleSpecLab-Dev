@@ -400,3 +400,79 @@ html{scrollbar-gutter:stable}
   .text-only-hero .dashboard-hero-copy h2{font-size:2rem}
   .text-only-hero .dashboard-hero-copy h2 span{white-space:normal}
 }
+
+/* dev.10 final result-table fit: prevent unnecessary horizontal scroll on desktop */
+#tab-results .results-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+#tab-results .results-grid > .panel{
+  min-width:0;
+  padding:18px;
+  overflow:hidden;
+}
+#tab-results .results-grid > .panel > h3{
+  margin:0 0 14px;
+}
+#tab-results .table-scroll{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  overflow-x:hidden;
+  overflow-y:visible;
+  box-sizing:border-box;
+}
+#tab-results .table-scroll table{
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  table-layout:fixed;
+  box-sizing:border-box;
+}
+#tab-results .table-scroll th,
+#tab-results .table-scroll td{
+  box-sizing:border-box;
+  min-width:0;
+  padding:12px 12px;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  word-break:keep-all;
+}
+#tab-results .results-grid > .panel:first-child .table-scroll th:first-child,
+#tab-results .results-grid > .panel:first-child .table-scroll td:first-child{
+  width:34%;
+}
+#tab-results .results-grid > .panel:first-child .table-scroll th:not(:first-child),
+#tab-results .results-grid > .panel:first-child .table-scroll td:not(:first-child){
+  width:22%;
+}
+#tab-results .results-grid > .panel:last-child .table-scroll th:first-child,
+#tab-results .results-grid > .panel:last-child .table-scroll td:first-child{
+  width:68%;
+}
+#tab-results .results-grid > .panel:last-child .table-scroll th:last-child,
+#tab-results .results-grid > .panel:last-child .table-scroll td:last-child{
+  width:32%;
+}
+
+@media(max-width:900px){
+  #tab-results .results-grid{grid-template-columns:1fr}
+  #tab-results .results-grid > .panel{padding:16px}
+}
+
+/* dev.10 final OCR notice: keep the caution copy on one line on desktop */
+@media (min-width:1001px){
+  #tab-capture .ocr-caution{
+    white-space:nowrap;
+    font-size:clamp(.82rem,.92vw,.95rem);
+    line-height:1.4;
+    padding:12px 14px;
+    overflow:visible;
+  }
+}
+
+@media (max-width:1000px){
+  #tab-capture .ocr-caution{
+    white-space:normal;
+  }
+}

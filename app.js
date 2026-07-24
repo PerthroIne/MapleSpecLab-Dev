@@ -157,16 +157,28 @@ function loadLocal() {
 }
 
 function activateTab(tabName) {
-  const button = $(`.tab[data-tab="${tabName}"]`);
-  if (!button) return;
-  $$(".tab").forEach(b => b.classList.toggle("active", b === button));
-  $$(".tab-panel").forEach(panel => panel.classList.toggle("active", panel.id === `tab-${tabName}`));
+  const panel = $(`#tab-${tabName}`);
+  if (!panel) return;
+
+  $$(".tab").forEach(button =>
+    button.classList.toggle("active", button.dataset.tab === tabName)
+  );
+  $$(".secondary-link").forEach(button =>
+    button.classList.toggle("active", button.dataset.tab === tabName)
+  );
+  $$(".tab-panel").forEach(item =>
+    item.classList.toggle("active", item === panel)
+  );
   window.scrollTo({top: 0, behavior: "smooth"});
 }
 
 function setupTabs() {
-  $$(".tab").forEach(button => button.addEventListener("click", () => activateTab(button.dataset.tab)));
-  $$('[data-go-tab]').forEach(button => button.addEventListener('click', () => activateTab(button.dataset.goTab)));
+  $$(".tab, .secondary-link").forEach(button =>
+    button.addEventListener("click", () => activateTab(button.dataset.tab))
+  );
+  $$('[data-go-tab]').forEach(button =>
+    button.addEventListener('click', () => activateTab(button.dataset.goTab))
+  );
 }
 
 
@@ -561,13 +573,6 @@ function applyOcr() {
   activateTab("stats");
 }
 
-function activateTab(name) {
-  const button = $(`.tab[data-tab="${name}"]`);
-  if (!button) return;
-  $$(".tab").forEach(b => b.classList.toggle("active", b === button));
-  $$(".tab-panel").forEach(panel => panel.classList.toggle("active", panel.id === `tab-${name}`));
-  window.scrollTo({top: 0, behavior: "smooth"});
-}
 
 function downloadJson(filename, data) {
   const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
