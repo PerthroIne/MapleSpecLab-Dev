@@ -241,3 +241,142 @@ html{scrollbar-gutter:stable}
   .dashboard-feature-strip{grid-template-columns:1fr;padding:0 12px 12px}
 }
 \n\n/* dev.10 release-candidate layout overrides */\n.master-header{display:block!important;padding:10px 18px 8px!important;overflow:visible!important}\n.header-main-row{display:grid;grid-template-columns:auto minmax(480px,1fr) auto;align-items:center;gap:16px;min-width:0}\n.header-main-row>*{min-width:0}\n.master-header .brand-lockup{min-width:172px!important}\n.dev-build-badge{display:none!important}\n.master-tabs{display:flex!important;justify-content:flex-start;gap:2px!important;overflow:visible!important;white-space:nowrap;padding:0!important}\n.master-tabs .tab{padding:9px 9px!important;font-size:.82rem!important;min-height:38px!important}\n.master-header .top-actions{display:flex;justify-content:flex-end;gap:7px;flex-wrap:nowrap!important}\n.master-header .top-actions .button{padding:0 11px!important;font-size:.78rem!important;min-height:38px!important}\n.secondary-nav{display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-top:5px;padding-right:2px}\n.secondary-link{border:0;background:transparent;color:#52647a;font:inherit;font-size:.74rem;padding:5px 8px;border-radius:8px;cursor:pointer}\n.secondary-link:hover,.secondary-link.active{background:#fff3de;color:#0f2747}\n.text-only-hero{display:block!important}\n.text-only-hero .dashboard-hero-copy{padding:42px 38px 30px!important;min-height:310px;justify-content:center}\n.text-only-hero .dashboard-hero-copy h2{font-size:clamp(2rem,2.65vw,3rem)!important;line-height:1.18!important;max-width:850px!important;white-space:normal!important;margin-bottom:18px!important}\n.text-only-hero .dashboard-hero-description{display:block!important;font-size:1.02rem!important;max-width:720px!important;line-height:1.75!important}\n.text-only-hero .dashboard-feature-strip{margin-top:8px}\n.dashboard-feature-strip article{align-items:flex-start!important;min-height:112px}\n.dashboard-feature-strip article>span{margin-top:1px}\n.dashboard-feature-strip article div{min-width:0}\n.dashboard-feature-strip strong{line-height:1.35}\n.dashboard-feature-strip p{line-height:1.55;word-break:keep-all}\n.ocr-caution{margin:0 0 16px;padding:14px 16px;border:1px solid #f3cf84;border-left:4px solid var(--primary);border-radius:12px;background:#fff8e8;color:#624712;line-height:1.65}\n.ocr-caution strong{color:#0f2747;margin-right:5px}\n@media (min-width:1181px) and (max-width:1460px){\n  .header-main-row{grid-template-columns:auto minmax(430px,1fr) auto;gap:10px}\n  .master-header .brand-lockup{min-width:158px!important}\n  .master-tabs .tab{padding:8px 7px!important;font-size:.76rem!important}\n  .master-header .top-actions{gap:5px}\n  .master-header .top-actions .button{padding:0 8px!important;font-size:.72rem!important}\n}\n@media(max-width:1180px){\n  .header-main-row{grid-template-columns:1fr auto}\n  .master-tabs{grid-column:1/-1;grid-row:2;flex-wrap:wrap!important;margin-top:6px}\n  .secondary-nav{justify-content:flex-end}\n}\n@media(max-width:760px){\n  .header-main-row{display:flex;flex-direction:column;align-items:stretch}\n  .master-tabs{justify-content:flex-start;flex-wrap:wrap!important}\n  .master-header .top-actions{justify-content:flex-start;flex-wrap:wrap!important}\n  .secondary-nav{justify-content:flex-start}\n  .text-only-hero .dashboard-hero-copy{padding:30px 22px 24px!important;min-height:auto}\n  .text-only-hero .dashboard-hero-copy h2{font-size:2rem!important}\n}\n
+/* dev.10 final alignment correction */
+@media (min-width: 901px) {
+  .master-header {
+    display: block !important;
+    position: sticky !important;
+    top: 8px;
+    padding: 10px 16px !important;
+    margin-bottom: 38px;
+    overflow: visible !important;
+  }
+
+  .header-main-row {
+    display: grid !important;
+    grid-template-columns: 166px minmax(430px, 1fr) auto !important;
+    grid-template-rows: 48px !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .header-main-row .brand-lockup {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .header-main-row .master-tabs {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 1px !important;
+    overflow: visible !important;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .header-main-row .master-tabs .tab {
+    flex: 0 0 auto;
+    min-height: 38px !important;
+    padding: 8px 9px !important;
+    font-size: .79rem !important;
+  }
+
+  .header-main-row .top-actions {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin: 0 !important;
+    min-width: 0;
+  }
+
+  .header-main-row .top-actions .button,
+  .header-main-row .top-actions .file-label {
+    flex: 0 0 auto !important;
+    min-height: 38px !important;
+    padding: 0 10px !important;
+    font-size: .75rem !important;
+  }
+
+  .secondary-nav {
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 10px;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center;
+    gap: 2px;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .secondary-link {
+    padding: 4px 7px !important;
+    font-size: .72rem !important;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1280px) {
+  .header-main-row {
+    grid-template-columns: 150px minmax(390px, 1fr) auto !important;
+    gap: 7px !important;
+  }
+  .master-header .brand-avatar { width: 38px; height: 38px; }
+  .master-header .brand-lockup h1 { font-size: .96rem; }
+  .master-header .subtitle { font-size: .61rem; }
+  .header-main-row .master-tabs .tab {
+    padding: 7px 6px !important;
+    font-size: .72rem !important;
+  }
+  .header-main-row .top-actions { gap: 4px !important; }
+  .header-main-row .top-actions .button,
+  .header-main-row .top-actions .file-label {
+    padding: 0 7px !important;
+    font-size: .68rem !important;
+  }
+}
+
+/* Removing the hero artwork must also remove its reserved visual space. */
+.text-only-hero {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  align-self: stretch;
+  padding: 26px 18px 18px;
+}
+
+.text-only-hero .dashboard-hero-copy {
+  min-height: 0 !important;
+  padding: 8px 16px 22px !important;
+  justify-content: flex-start !important;
+}
+
+.text-only-hero .dashboard-hero-copy h2 {
+  max-width: 620px !important;
+  margin-bottom: 14px !important;
+}
+
+.text-only-hero .dashboard-feature-strip {
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  grid-column: auto !important;
+}
+
+@media (max-width: 900px) {
+  .master-header { margin-bottom: 0; }
+  .secondary-nav { position: static; }
+  .text-only-hero { padding: 18px 12px 12px; }
+  .text-only-hero .dashboard-hero-copy { padding: 12px 10px 20px !important; }
+}
