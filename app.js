@@ -1,6 +1,6 @@
-const APP_VERSION = "1.0.0-dev.4";
-const STORAGE_KEY = "mapleSpecLabV10Dev4";
-const GITHUB_REPOSITORY = "PerthroIne/MapleSpecLab-Dev";
+const APP_VERSION = "1.0.0-dev.5";
+const STORAGE_KEY = "mapleSpecLabV10Dev5";
+const GITHUB_REPOSITORY = "PerthroIne/MapleSpecLab";
 
 const STAT_META = {
   attack: ["공격력", false], attack_pct: ["공격력 %", true],
@@ -145,28 +145,13 @@ function contributionAnalysis(before, after) {
 }
 
 function saveLocal() {
-  const safe = {
-    stats: state.stats,
-    changes: state.changes,
-    companionDb: state.companionDb,
-    companionSelections: state.companionSelections,
-    companionInventory: state.companionInventory,
-    savedCompanionTeam: state.savedCompanionTeam
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({schemaVersion: 2, ...safe}));
+  // v1.0-dev.5: 입력값은 자동 저장하지 않습니다. 프로필 저장/열기를 사용하세요.
 }
 
 function loadLocal() {
+  // 이전 개발 버전의 자동 저장값을 불러오지 않습니다.
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved) {
-      state.stats = {...DEFAULT_STATS, ...(saved.stats || {})};
-      state.changes = saved.changes || [];
-      state.companionDb = saved.companionDb || state.companionDb;
-      state.companionSelections = saved.companionSelections || {};
-      state.companionInventory = saved.companionInventory || {};
-      state.savedCompanionTeam = saved.savedCompanionTeam || [];
-    }
+    ["mapleSpecLabV10Dev1","mapleSpecLabV10Dev2","mapleSpecLabV10Dev3","mapleSpecLabV10Dev4","mapleSpecLabV10Dev5"].forEach(key => localStorage.removeItem(key));
   } catch {}
 }
 
@@ -224,6 +209,24 @@ function renderStats() {
   });
 
   renderCurrentStateSummary(state.stats);
+  renderStatsCurrentCompanionTeam();
+}
+
+function renderStatsCurrentCompanionTeam(){
+  const box = document.querySelector("#statsCurrentCompanionTeam");
+  if(!box) return;
+  const team = getBaselineCompanionTeam();
+  if(team.length !== 7){
+    box.className = "stats-current-team empty-state";
+    box.textContent = "현재 사용 중인 동료를 정확히 7명 등록하면 여기에 표시됩니다.";
+    return;
+  }
+  box.className = "stats-current-team";
+  box.innerHTML = team.map((x, index) => `
+    <div class="stats-team-chip">
+      <img src="${x.companion.icon_data || x.companion.icon}" alt="${x.companion.name}">
+      <span><b>${index===0?"메인":"서브"}</b>${x.companion.name}<small>${x.companion.rarities[x.rarity].name} · Lv.${x.level}</small></span>
+    </div>`).join("");
 }
 function renderChangeSelect() {
   const select = $("#changeKey");
@@ -458,10 +461,10 @@ function renderOcrResults() {
   box.className = "ocr-results";
   box.innerHTML = Object.entries(STAT_META).map(([key, meta]) => {
     const recognized = Object.prototype.hasOwnProperty.call(state.ocr, key);
-    const value = recognized ? state.ocr[key] : state.stats[key] ?? 0;
+    const value = recognized ? state.ocr[key] : 0;
     return `<div class="ocr-item ${recognized ? "" : "ocr-confidence-low"}">
       <label>
-        <span>${meta[0]}${recognized ? "" : ' <small class="ocr-missing-note">미인식 · 현재값 유지</small>'}</span>
+        <span>${meta[0]} <small class="ocr-status-badge ${recognized ? 'recognized' : 'missing'}">${recognized ? '인식됨' : '미인식'}</small></span>
         <input data-ocr-key="${key}" inputmode="decimal" value="${value}">
       </label>
     </div>`;
@@ -493,9 +496,9 @@ async function runOcr() {
     }
     $("#rawOcrText").value = fullText.trim();
     const recognized = extractStatsFromText(fullText);
-    state.ocr = {...state.stats, ...recognized};
+    state.ocr = {...recognized};
     renderOcrResults();
-    $("#ocrStatus").textContent = `${Object.keys(state.ocr).length}개 인식`;
+    $("#ocrStatus").textContent = `${Object.keys(recognized).length}개 인식`;
   } catch (error) {
     console.error(error);
     $("#ocrStatus").textContent = "OCR 실패";
@@ -1141,8 +1144,9 @@ function getBaselineCompanionTeam(){
 function renderCurrentCompanionTeam(){
   const box=$("#currentCompanionTeamView"); if(!box)return;
   const team=getBaselineCompanionTeam();
-  if(team.length!==7){box.innerHTML='<div class="empty-state">아래 목록에서 현재 장착 동료를 정확히 7명 선택한 뒤 기준 저장을 눌러주세요.</div>';return}
+  if(team.length!==7){box.innerHTML='<div class="empty-state">아래 목록에서 현재 장착 동료를 정확히 7명 선택한 뒤 기준 저장을 눌러주세요.</div>';renderStatsCurrentCompanionTeam();return}
   box.innerHTML=team.map((x,i)=>`<div class="companion-current-member"><span>${i===0?"메인":"서브"}</span><img src="${x.companion.icon_data||x.companion.icon}" alt="${x.companion.name}"><strong>${x.companion.name}</strong><small>${x.companion.rarities[x.rarity].name} Lv.${x.level}</small></div>`).join("");
+  renderStatsCurrentCompanionTeam();
 }
 
 function renderCompanions(){
