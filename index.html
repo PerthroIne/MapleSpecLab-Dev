@@ -34,51 +34,49 @@
 </header>
 <nav aria-label="기능 탭" class="tabs">
 <button class="tab active" data-tab="home" type="button">홈</button>
-<button class="tab" data-tab="capture" type="button">OCR</button>
 <button class="tab" data-tab="stats" type="button">현재 스펙</button>
+<button class="tab" data-tab="capture" type="button">OCR</button>
 <button class="tab" data-tab="changes" type="button">장비·어빌</button>
-<button class="tab" data-tab="results" type="button">분석 결과</button>
 <button class="tab" data-tab="companions" type="button">동료</button>
+<button class="tab" data-tab="results" type="button">분석 결과</button>
 <button class="tab" data-tab="help" type="button">도움말</button>
 <button class="tab" data-tab="report" type="button">오류 제보</button>
 <button class="tab" data-tab="about" type="button">정보</button>
 </nav>
 <main>
 <section class="tab-panel active" id="tab-home">
-<article class="hero-card">
-<img alt="메이플 키우기 연구소 대표 이미지" src="./assets/brand/representative.png"/>
-<div>
-<p class="eyebrow">MAPLE SPEC LAB</p>
-<h2>스펙 분석부터 변경 결과까지, 한 번에.</h2>
-<p>OCR 또는 직접 입력으로 현재 스펙을 등록하고 장비·어빌·동료 변경 결과를 바로 비교해보세요.</p>
-<div class="button-row">
-<button class="button primary" data-go-tab="capture" type="button">OCR 시작</button>
-<button class="button ghost" data-go-tab="stats" type="button">직접 입력</button>
-</div>
-</div>
-</article><div class="feature-strip">
-<article><strong>정확한 분석</strong><span>현재 스펙과 변경값을 분리해 계산합니다.</span></article>
-<article><strong>최적 선택 추천</strong><span>장비·어빌·동료 변경 결과를 비교합니다.</span></article>
-<article><strong>변경 결과 비교</strong><span>변경 전후 수치와 피해 변화를 확인합니다.</span></article>
-<article><strong>데이터는 안전하게</strong><span>이미지와 입력값은 기기 안에서 처리됩니다.</span></article>
-</div>
-<article class="notice-card strong-notice">
-<strong>📢 연구소 운영 안내</strong>
-<p>이 연구소는 개인의 호기심으로 시작한 개인 프로젝트입니다. 개인의 사정이나 변덕에 따라 연구소가 삭제되거나 추가 업데이트가 중단될 수 있습니다.</p>
+<article class="home-hero">
+  <div class="home-hero-copy">
+    <p class="eyebrow">MAPLE SPEC LAB</p>
+    <h2>스펙 분석부터 변경 결과까지,<br/>한 번에.</h2>
+    <p class="home-hero-description">OCR 또는 직접 입력으로 현재 스펙을 등록하고<br class="desktop-break"/>장비·어빌·동료 변경 결과를 바로 비교해보세요.</p>
+    <div class="button-row home-hero-actions">
+      <button class="button primary home-primary" data-go-tab="capture" type="button">OCR 시작</button>
+      <button class="button ghost" data-go-tab="stats" type="button">직접 입력</button>
+    </div>
+    <p class="home-project-note">개인의 호기심으로 시작한 프로젝트입니다.</p>
+  </div>
+  <div class="home-hero-visual">
+    <img alt="메이플 키우기 연구소 대표 이미지" src="./assets/brand/representative.png"/>
+  </div>
 </article>
-<article class="notice-card caution-notice">
-<strong>⚠ 계산 결과 안내</strong>
-<p>계산 결과는 연구 목적으로 제공됩니다. 게임 업데이트나 계산식 변경으로 실제 결과와 차이가 생길 수 있으므로 중요한 결정 전에는 게임 내 수치를 함께 확인해 주세요.</p>
-</article>
-<article class="notice-card source-notice">
-<strong>계산식 출처</strong>
-<p>이 연구소의 스펙 및 피해량 계산식은 <a href="https://kimprincess-calculator.netlify.app/" rel="noopener noreferrer" target="_blank">최종뎀 계산기 Beta 2.0</a>을 토대로 제작되었습니다. 일부 기능과 계산 방식은 MapleSpecLab의 목적에 맞게 수정 및 확장되었습니다.</p>
-</article>
-<div class="workflow-grid">
-<button class="workflow-card" data-go-tab="stats" type="button"><span>1</span><strong>현재 스펙</strong><small>OCR 또는 직접 입력으로 기준값 등록</small></button>
-<button class="workflow-card" data-go-tab="changes" type="button"><span>2</span><strong>변경 비교</strong><small>장비 · 어빌 · 동료의 A/B 차이 계산</small></button>
-<button class="workflow-card" data-go-tab="results" type="button"><span>3</span><strong>결과 분석</strong><small>적용 후 스펙과 피해 변화 확인</small></button>
-<button class="workflow-card" data-go-tab="help" type="button"><span>?</span><strong>사용 가이드</strong><small>처음부터 단계별로 자세히 보기</small></button>
+<div class="home-feature-grid" aria-label="주요 기능">
+  <article class="home-feature-card">
+    <span class="home-feature-icon" aria-hidden="true">◎</span>
+    <div><strong>정확한 분석</strong><p>현재 스펙과 변경값을 분리해 계산합니다.</p></div>
+  </article>
+  <article class="home-feature-card">
+    <span class="home-feature-icon" aria-hidden="true">↗</span>
+    <div><strong>최적 선택 추천</strong><p>수많은 경우 중 더 나은 선택을 찾아줍니다.</p></div>
+  </article>
+  <article class="home-feature-card">
+    <span class="home-feature-icon" aria-hidden="true">⇄</span>
+    <div><strong>변경 결과 비교</strong><p>변경 전후 스펙과 피해 변화를 한눈에 확인합니다.</p></div>
+  </article>
+  <article class="home-feature-card">
+    <span class="home-feature-icon" aria-hidden="true">◇</span>
+    <div><strong>데이터는 안전하게</strong><p>이미지와 입력값은 현재 기기 안에서 처리됩니다.</p></div>
+  </article>
 </div>
 </section>
 <section class="tab-panel" id="tab-capture">
@@ -554,7 +552,7 @@
 <article class="panel about-card">
 <h3>버전 정보</h3>
 <dl class="version-list">
-<div><dt>연구소 버전</dt><dd>v1.0.0-dev.5</dd></div>
+<div><dt>연구소 버전</dt><dd>v1.0.0-dev.6</dd></div>
 <div><dt>계산식 기준</dt><dd>Beta 2.0 기반</dd></div>
 <div><dt>동료 DB</dt><dd>Companion DB v1</dd></div>
 <div><dt>배포 단계</dt><dd>개발 테스트</dd></div>
@@ -563,7 +561,7 @@
 </div>
 </section>
 </main>
-<footer><span>이미지는 서버로 전송하지 않음</span><span>·</span><span>프로필은 직접 저장·불러오기</span><span>·</span><span>v1.0.0-dev.5</span><span>·</span><a href="https://kimprincess-calculator.netlify.app/" rel="noopener noreferrer" target="_blank">계산식 출처: 최종뎀 계산기 Beta 2.0</a></footer>
+<footer><span>이미지는 서버로 전송하지 않음</span><span>·</span><span>프로필은 직접 저장·불러오기</span><span>·</span><span>v1.0.0-dev.6</span><span>·</span><a href="https://kimprincess-calculator.netlify.app/" rel="noopener noreferrer" target="_blank">계산식 출처: 최종뎀 계산기 Beta 2.0</a></footer>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <script src="./app.js"></script>

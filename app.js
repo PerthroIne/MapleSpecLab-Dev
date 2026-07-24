@@ -1,4 +1,4 @@
-const APP_VERSION = "1.0.0-dev.5";
+const APP_VERSION = "1.0.0-dev.6";
 const STORAGE_KEY = "mapleSpecLabV10Dev5";
 const GITHUB_REPOSITORY = "PerthroIne/MapleSpecLab";
 
@@ -145,7 +145,7 @@ function contributionAnalysis(before, after) {
 }
 
 function saveLocal() {
-  // v1.0-dev.5: 입력값은 자동 저장하지 않습니다. 프로필 저장/열기를 사용하세요.
+  // v1.0-dev.6: 입력값은 자동 저장하지 않습니다. 프로필 저장/열기를 사용하세요.
 }
 
 function loadLocal() {
