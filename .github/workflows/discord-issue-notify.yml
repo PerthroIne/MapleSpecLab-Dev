@@ -1,0 +1,29 @@
+name: Discord issue notification
+on:
+  issues:
+    types: [opened, reopened]
+permissions:
+  contents: read
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "DISCORD_WEBHOOK secret is not configured."
+            exit 0
+          fi
+          payload=$(jq -n \
+            --arg title "🚨 MapleSpecLab 새 제보 #${ISSUE_NUMBER}" \
+            --arg desc "$ISSUE_TITLE" \
+            --arg url "$ISSUE_URL" \
+            --arg author "$ISSUE_AUTHOR" \
+            '{embeds:[{title:$title,description:$desc,url:$url,color:16098851,fields:[{name:"작성자",value:$author,inline:true}]}]}')
+          curl --fail-with-body -H "Content-Type: application/json" -d "$payload" "$DISCORD_WEBHOOK"

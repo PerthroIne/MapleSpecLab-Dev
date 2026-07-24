@@ -1,0 +1,14 @@
+{
+  "name": "메이플 키우기 스펙 연구소",
+  "short_name": "MapleSpecLab",
+  "description": "메이플 키우기 스펙·장비·어빌·동료 비교 연구 도구",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff9ed",
+  "theme_color": "#f5a623",
+  "icons": [
+    {"src":"./assets/brand/icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"./assets/brand/icon-512.png","sizes":"512x512","type":"image/png"}
+  ]
+}

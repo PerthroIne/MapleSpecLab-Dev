@@ -1,0 +1,39 @@
+name: 오류 제보
+about: OCR, 계산, UI 또는 기능 오류를 제보합니다.
+title: "[오류] "
+labels: ["user-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        개인정보는 입력하지 마세요. 스크린샷을 첨부하기 전 채팅, 알림, 계정명 등이 보이지 않는지 확인해 주세요.
+  - type: dropdown
+    id: type
+    attributes:
+      label: 오류 종류
+      options: [OCR 인식 오류, 계산 결과 오류, 화면/UI 오류, 프로그램 오류, 기타]
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: 자세한 설명
+      description: 발생 메뉴와 상황을 적어 주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 재현 순서
+      placeholder: "1. ...\n2. ...\n3. ..."
+  - type: textarea
+    id: expected
+    attributes:
+      label: 실제 결과와 예상 결과
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 개인정보 확인
+      options:
+        - label: 첨부 파일과 내용에 개인정보가 없는지 확인했습니다.
+          required: true
